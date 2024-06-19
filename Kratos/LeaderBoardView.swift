@@ -15,7 +15,7 @@ struct LeaderBoardView: View {
             ZStack {
                 Color(red: 0.16, green: 0.18, blue: 0.2)
                     .edgesIgnoringSafeArea(.all)
-                
+                //jake is gay
                 /*RadialGradient(gradient: Gradient(colors: [
                     Color.white.opacity(0.4),
                     Color.white.opacity(0.0)
