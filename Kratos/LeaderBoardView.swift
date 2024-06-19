@@ -152,7 +152,7 @@ struct LeaderBoardView: View {
                 }
                 .onAppear 
                 {
-                   let newEntry = LeaderboardEntry(name: "Test Player", score: 100)
+                   let newEntry = LeaderboardEntry(name: "Mitchell Toney", score: 500)
                    firestoreService.addEntry(newEntry)
                 }
             }
