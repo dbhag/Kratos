@@ -3,12 +3,12 @@
 //  Kratos
 //
 //  Created by Dhruv Bhagavatula on 6/11/24.
-//
+// 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        NavigationView{
+        NavigationView {
             GeometryReader { geometry in
                 ZStack {
                     Color(red: 0.16, green: 0.18, blue: 0.2)
@@ -42,6 +42,7 @@ struct ContentView: View {
                         .frame(height: geometry.size.height * 0.1)
                         .padding(.top, geometry.size.height * 0.05)
                         
+                        
                         VStack{
                             Spacer()
                             NavigationLink(destination: NewWorkoutView())
@@ -63,7 +64,6 @@ struct ContentView: View {
                             
                             Spacer()
                         }
-                        
                         
                         ZStack {
                             Rectangle()

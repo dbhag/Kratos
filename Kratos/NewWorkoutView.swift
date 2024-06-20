@@ -103,31 +103,31 @@ struct NewWorkoutView: View {
                     }
                     .padding(.bottom, geometry.size.height * 0.02)
                     
-                    Image("rectangle41")
+                    Image(.rectangle41)
                             .resizable()
                             .scaledToFit()
                             .frame(width: geometry.size.width * 0.9)
-                            //.offset(y: geometry.size.height * -0.87)
+                            .offset(y: geometry.size.height * 0.1)
                             .padding(.vertical, geometry.size.height * 0.02)
                     
                     Spacer()
 
                     HStack(spacing: geometry.size.width * 0.15) {
                         NavigationLink(destination: ContentView()) {
-                            Image("frame1")
+                            Image(.frame1)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
                         }
 
-                        Image("vector")
+                        Image(.vector)
                             .resizable()
                             .scaledToFit()
                             .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
                             .offset(x: -geometry.size.width * 0.07)
 
                         NavigationLink(destination: LeaderBoardView()) {
-                            Image("vector1")
+                            Image(.vector1)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
@@ -135,7 +135,7 @@ struct NewWorkoutView: View {
                         }
 
                         NavigationLink(destination: ProfileView()) {
-                            Image("iconamoonProfile")
+                            Image(.iconamoonProfile)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
@@ -144,7 +144,7 @@ struct NewWorkoutView: View {
                     }
                     .padding(.bottom, geometry.size.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.07))
                     .frame(width: geometry.size.width * 0.9)
-                    .offset(x: 0, y: geometry.size.height * -0.1)
+                    .offset(x: 0, y: geometry.size.height * -0.06)
                     .opacity(0.75)
                 }
             }
