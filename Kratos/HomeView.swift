@@ -44,12 +44,15 @@ struct ContentView: View {
                         
                         VStack{
                             Spacer()
-                            Image(.plusplus)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geometry.size.width * 0.2, height: geometry.size.height * 0.1)
-                                .padding(.bottom, geometry.size.height * 0.02)
-                                .offset(y: geometry.size.height * 0.68)
+                            NavigationLink(destination: NewWorkoutView())
+                            {
+                                Image(.plusplus)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: geometry.size.width * 0.2, height: geometry.size.height * 0.1)
+                                    .padding(.bottom, geometry.size.height * 0.02)
+                                    .offset(y: geometry.size.height * 0.68)
+                            }
                             
                             Image(.rectangle41)
                                 .resizable()

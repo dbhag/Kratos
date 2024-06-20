@@ -6,98 +6,125 @@
 //
 
 import SwiftUI
+import GoogleSignIn
 import FirebaseAuth
 
-struct LoginView: View {
-    @Environment(\.presentationMode) var presentationMode
-       @State private var email: String = ""
-       @State private var password: String = ""
-       @State private var showAlert: Bool = false
-       @State private var navigateToHome = false
-       @State private var alertMessage: String = ""
+enum AuthState {
+    case signedIn
+    case signedOut
+}
 
-       var body: some View {
-           NavigationView {
-               VStack {
-                   Spacer()
+@MainActor
+class AuthViewModel: ObservableObject {
+    @Published var errorMessage: ErrorMessage?
+    @Published var state: AuthState = .signedOut
+    @Published var signInMethod: String?
 
-                   // Title
-                   Text("Login")
-                       .font(.largeTitle)
-                       .fontWeight(.bold)
-                       .foregroundColor(.white)
-                       .padding(.bottom, 40)
+    func signInWithGoogle() async {
+        if GIDSignIn.sharedInstance.hasPreviousSignIn() {
+            do {
+                let result = try await GIDSignIn.sharedInstance.restorePreviousSignIn()
+                print("Restoring previous session")
+                await authenticateGoogleUser(for: result)
+            }
+            catch {
+                print(error.localizedDescription)
+                self.errorMessage = ErrorMessage(message: error.localizedDescription)
+            }
+        } else {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            guard let rootViewController = windowScene.windows.first?.rootViewController else { return }
 
-                   // Email Field
-                   TextField("Email", text: $email)
-                       .padding()
-                       .background(Color.gray.opacity(0.2))
-                       .cornerRadius(10)
-                       .padding(.bottom, 20)
-                       .keyboardType(.emailAddress)
-                       .autocapitalization(.none)
-                       .foregroundColor(.white)
-
-                   // Password Field
-                   SecureField("Password", text: $password)
-                       .padding()
-                       .background(Color.gray.opacity(0.2))
-                       .cornerRadius(10)
-                       .padding(.bottom, 20)
-                       .foregroundColor(.white)
-
-                   // Login Button
-                   Button(action: {
-                       login()
-                   }) {
-                       Text("Login")
-                           .font(.headline)
-                           .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.2))
-                           .padding()
-                           .frame(width: 220, height: 60)
-                           .background(Color.white)
-                           .cornerRadius(15.0)
-                           .shadow(color: .gray, radius: 5, x: 0, y: 5)
-                   }
-                   .alert(isPresented: $showAlert) {
-                       Alert(title: Text("Login Failed"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-                   }
-                   .background(
-                       NavigationLink(destination: ContentView(), isActive: $navigateToHome) {
-                           EmptyView()
-                       }
-                   )
-
-                   Spacer()
-               }
-               .padding()
-               .background(Color(red: 0.16, green: 0.18, blue: 0.2))
-               .edgesIgnoringSafeArea(.all)
-               .navigationBarBackButtonHidden(true)
-               .toolbar {
-                   ToolbarItem(placement: .navigationBarLeading) {
-                       Button("Back") {
-                           presentationMode.wrappedValue.dismiss()
-                       }
-                   }
-               }
-           }
-           .navigationBarBackButtonHidden(true)
-       }
-
-    func login() {
-            Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-                if let error = error {
-                    // Handle the error by showing an alert
-                    alertMessage = error.localizedDescription
-                    showAlert = true
-                } else {
-                    // Navigate to home on successful login
-                    navigateToHome = true
-                }
+            do {
+                let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+                await authenticateGoogleUser(for: result.user)
+            }
+            catch {
+                print(error.localizedDescription)
+                self.errorMessage = ErrorMessage(message: error.localizedDescription)
             }
         }
     }
+
+    func authenticateGoogleUser(for user: GIDGoogleUser?) async {
+        guard let idToken = user?.idToken?.tokenString else { return }
+        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user?.accessToken.tokenString ?? "")
+
+        do {
+            try await Auth.auth().signIn(with: credential)
+            self.state = .signedIn
+            UserDefaults.standard.set(true, forKey: "isLoggedIn")
+            self.signInMethod = "Google"
+        }
+        catch {
+            print(error.localizedDescription)
+            self.errorMessage = ErrorMessage(message: error.localizedDescription)
+        }
+    }
+}
+
+struct ErrorMessage: Identifiable {
+    var id = UUID()
+    var message: String
+}
+
+
+struct LoginView: View {
+    @StateObject private var authViewModel = AuthViewModel()
+
+    var body: some View {
+        NavigationView {
+            ZStack {
+                Color(red: 0.16, green: 0.18, blue: 0.2)
+                    .edgesIgnoringSafeArea(.all)
+                
+                VStack {
+                    Spacer().frame(height: 100)
+                    
+                    // Title
+                    Text("Login with Google")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .padding(.bottom, 40)
+                    
+                    Spacer()
+                    // Google Sign-In Button
+                    Button(action: {
+                        Task {
+                            await authViewModel.signInWithGoogle()
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "globe")
+                                .foregroundColor(.white)
+                            Text("Sign in with Google")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(15.0)
+                        .shadow(color: .gray, radius: 5, x: 0, y: 5)
+                    }
+                    .alert(item: $authViewModel.errorMessage) { error in
+                        Alert(title: Text("Sign In Failed"), message: Text(error.message), dismissButton: .default(Text("OK")))
+                    }
+                    .background(
+                        NavigationLink(destination: ContentView(), isActive: .constant(authViewModel.state == .signedIn)) {
+                            EmptyView()
+                        }
+                    )
+                    
+                    Spacer()
+                }
+                .padding()
+            }
+            .navigationBarBackButtonHidden(true)
+        }
+    }
+}
+
 #Preview {
     LoginView()
 }
