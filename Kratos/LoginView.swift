@@ -8,6 +8,7 @@
 import SwiftUI
 import GoogleSignIn
 import FirebaseAuth
+import FirebaseFirestore
 
 enum AuthState {
     case signedIn
@@ -19,6 +20,7 @@ class AuthViewModel: ObservableObject {
     @Published var errorMessage: ErrorMessage?
     @Published var state: AuthState = .signedOut
     @Published var signInMethod: String?
+    private let db = Firestore.firestore()
 
     func signInWithGoogle() async {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
@@ -51,16 +53,30 @@ class AuthViewModel: ObservableObject {
         let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user?.accessToken.tokenString ?? "")
 
         do {
-            try await Auth.auth().signIn(with: credential)
+            let authResult = try await Auth.auth().signIn(with: credential)
             self.state = .signedIn
             UserDefaults.standard.set(true, forKey: "isLoggedIn")
             self.signInMethod = "Google"
+            storeUserData(authResult.user)
         }
         catch {
             print(error.localizedDescription)
             self.errorMessage = ErrorMessage(message: error.localizedDescription)
         }
     }
+    private func storeUserData(_ user: FirebaseAuth.User) {
+            let userRef = db.collection("users").document(user.uid)
+
+            userRef.setData([
+                "uid": user.uid,
+                "email": user.email ?? "",
+                "username": user.displayName ?? "Anonymous"
+            ]) { error in
+                if let error = error {
+                    print("Error storing user data: \(error.localizedDescription)")
+                }
+            }
+        }
 }
 
 struct ErrorMessage: Identifiable {

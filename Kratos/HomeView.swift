@@ -42,7 +42,6 @@ struct ContentView: View {
                         .frame(height: geometry.size.height * 0.1)
                         .padding(.top, geometry.size.height * 0.05)
                         
-                        
                         VStack{
                             Spacer()
                             NavigationLink(destination: NewWorkoutView())
