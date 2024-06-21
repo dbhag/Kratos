@@ -13,6 +13,7 @@ import FirebaseFirestore
 enum AuthState {
     case signedIn
     case signedOut
+    case needsUsername
 }
 
 @MainActor
@@ -21,7 +22,8 @@ class AuthViewModel: ObservableObject {
     @Published var state: AuthState = .signedOut
     @Published var signInMethod: String?
     private let db = Firestore.firestore()
-
+    private var currentUser: FirebaseAuth.User?
+    
     func signInWithGoogle() async {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
             do {
@@ -54,26 +56,39 @@ class AuthViewModel: ObservableObject {
 
         do {
             let authResult = try await Auth.auth().signIn(with: credential)
-            self.state = .signedIn
+            self.currentUser = authResult.user
             UserDefaults.standard.set(true, forKey: "isLoggedIn")
             self.signInMethod = "Google"
-            storeUserData(authResult.user)
+            checkIfUserExists(authResult.user)
         }
         catch {
             print(error.localizedDescription)
             self.errorMessage = ErrorMessage(message: error.localizedDescription)
         }
     }
-    private func storeUserData(_ user: FirebaseAuth.User) {
+    private func checkIfUserExists(_ user: FirebaseAuth.User) {
             let userRef = db.collection("users").document(user.uid)
-
+            userRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    self.state = .signedIn
+                } else {
+                    self.state = .needsUsername
+                }
+            }
+        }
+    func saveUsername(_ username: String) {
+            guard let user = currentUser else { return }
+            let userRef = db.collection("users").document(user.uid)
+            
             userRef.setData([
                 "uid": user.uid,
                 "email": user.email ?? "",
-                "username": user.displayName ?? "Anonymous"
+                "username": username
             ]) { error in
                 if let error = error {
                     print("Error storing user data: \(error.localizedDescription)")
+                } else {
+                    self.state = .signedIn
                 }
             }
         }
@@ -86,7 +101,7 @@ struct ErrorMessage: Identifiable {
 
 
 struct LoginView: View {
-    @StateObject private var authViewModel = AuthViewModel()
+    @EnvironmentObject private var authViewModel: AuthViewModel
 
     var body: some View {
         NavigationView {
@@ -131,6 +146,11 @@ struct LoginView: View {
                             EmptyView()
                         }
                     )
+                    .background(
+                      NavigationLink(destination: CreateUsernameView().environmentObject(authViewModel), isActive: .constant(authViewModel.state == .needsUsername)) {
+                          EmptyView()
+                        }
+                    )
                     
                     Spacer()
                 }
@@ -140,7 +160,38 @@ struct LoginView: View {
         }
     }
 }
+struct CreateUsernameView: View {
+    @EnvironmentObject private var authViewModel: AuthViewModel
+    @State private var username: String = ""
 
+    var body: some View {
+        VStack {
+            Text("Create a Username")
+                .font(.largeTitle)
+                .padding()
+
+            TextField("Username", text: $username)
+                .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(10)
+                .padding(.horizontal)
+
+            Button(action: {
+                authViewModel.saveUsername(username)
+            }) {
+                Text("Submit")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(10)
+                    .shadow(color: .gray, radius: 5, x: 0, y: 5)
+            }
+            .padding()
+        }
+        .padding()
+    }
+}
 #Preview {
     LoginView()
 }
