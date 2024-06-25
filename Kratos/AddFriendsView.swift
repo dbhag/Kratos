@@ -6,6 +6,14 @@ struct User: Identifiable {
     let id: String
     let username: String
     let email: String
+    var recentWorkouts: [Timestamp]
+    
+    init(id: String, username: String, email: String, recentWorkouts: [Timestamp] = []) {
+            self.id = id
+            self.username = username
+            self.email = email
+            self.recentWorkouts = recentWorkouts
+    }
 }
 
 struct AddFriendsView: View {

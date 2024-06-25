@@ -84,7 +84,8 @@ class AuthViewModel: ObservableObject {
                 "uid": user.uid,
                 "email": user.email ?? "",
                 "username": username,
-                "score": 0
+                "score": 0,
+                "recentWorkouts": []
             ]) { error in
                 if let error = error {
                     print("Error storing user data: \(error.localizedDescription)")

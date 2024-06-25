@@ -1,5 +1,7 @@
 
 import SwiftUI
+import FirebaseAuth
+import FirebaseFirestore
 
 struct NewWorkoutView: View {
     @State private var isFriendsSelected = true
@@ -89,6 +91,7 @@ struct NewWorkoutView: View {
                         if !text.isEmpty {
                             workoutModel.workouts.append(text)
                             text = ""
+                            logWorkoutTimestamp()
                         }
                     }) {
                         Text("Submit")
@@ -151,7 +154,36 @@ struct NewWorkoutView: View {
         }
         .navigationBarBackButtonHidden(true)
     }
-}
+    func logWorkoutTimestamp() {
+            guard let userID = Auth.auth().currentUser?.uid else { return }
+            let userRef = Firestore.firestore().collection("users").document(userID)
+            let newWorkoutTimestamp = Timestamp()
+
+            userRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    var recentWorkouts = document.data()?["recentWorkouts"] as? [Timestamp] ?? []
+                    recentWorkouts.append(newWorkoutTimestamp)
+                    
+                    // Keep only the last two workouts
+                    if recentWorkouts.count > 2 {
+                        recentWorkouts = Array(recentWorkouts.suffix(2))
+                    }
+
+                    userRef.updateData([
+                        "recentWorkouts": recentWorkouts
+                    ]) { error in
+                        if let error = error {
+                            print("Error updating recent workouts: \(error.localizedDescription)")
+                        } else {
+                            print("Recent workouts updated successfully")
+                        }
+                    }
+                } else {
+                    print("User document does not exist")
+                }
+            }
+        }
+    }
 
 #Preview {
     NewWorkoutView()
