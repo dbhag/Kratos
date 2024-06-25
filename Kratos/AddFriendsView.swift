@@ -106,7 +106,6 @@ struct AddFriendsView: View {
                 }
             }
         }
-        .navigationTitle("Add Friends")
         .onAppear {
             fetchIncomingRequests()
         }
@@ -129,6 +128,7 @@ struct AddFriendsView: View {
                         Text("Add")
                             .foregroundColor(.blue)
                     }
+                    .buttonStyle(PlainButtonStyle())
                 }
                 .listRowBackground(Color.clear)
             }
@@ -136,6 +136,13 @@ struct AddFriendsView: View {
             .scrollContentBackground(.hidden)
         }
         .padding()
+        .background(Color.black.opacity(0.8)) // Ensure background to avoid interaction issues
+        .cornerRadius(10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure the overlay takes the full space
+        .onTapGesture {
+            // Dismiss overlay when tapped outside
+            self.showOverlay = false
+        }
     }
 
     private func searchUser() {
@@ -165,6 +172,12 @@ struct AddFriendsView: View {
     private func addFriend(user: User) {
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
 
+        // Check to ensure the user is not sending a friend request to themselves
+        guard currentUserID != user.id else {
+            print("Cannot send friend request to yourself.")
+            return
+        }
+
         let friendRequest = [
             "from": currentUserID,
             "to": user.id,
@@ -180,6 +193,8 @@ struct AddFriendsView: View {
         }
     }
 
+
+
     private func fetchIncomingRequests() {
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
         
@@ -193,6 +208,12 @@ struct AddFriendsView: View {
                 }
                 guard let documents = snapshot?.documents else { return }
                 let fromIDs = documents.map { $0.data()["from"] as! String }
+                
+                guard !fromIDs.isEmpty else
+                {
+                   self.incomingRequests = []
+                   return
+                }
                 
                 self.db.collection("users").whereField("uid", in: fromIDs).getDocuments { snapshot, error in
                     if let error = error {
@@ -211,6 +232,8 @@ struct AddFriendsView: View {
     private func acceptFriendRequest(from user: User) {
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
 
+        print("Accepting friend request. Current User ID: \(currentUserID), Friend User ID: \(user.id)")
+
         db.collection("friendRequests")
             .whereField("from", isEqualTo: user.id)
             .whereField("to", isEqualTo: currentUserID)
@@ -227,12 +250,42 @@ struct AddFriendsView: View {
                             return
                         }
                         print("Friend request from \(user.username) accepted")
-                        fetchIncomingRequests()
+                        self.addFriendsToEachOther(currentUserID: currentUserID, friendUser: user)
                     }
                 }
             }
     }
 
+    private func addFriendsToEachOther(currentUserID: String, friendUser: User) {
+        let friendsCollection = db.collection("friends")
+        let batch = db.batch()
+
+        // Fetch the current user's username
+        db.collection("users").document(currentUserID).getDocument { (document, error) in
+            if let document = document, document.exists {
+                let currentUsername = document.data()?["username"] as? String ?? ""
+
+                // Add the friend to the current user's friends list
+                let currentUserFriendRef = friendsCollection.document(currentUserID).collection("friendsList").document(friendUser.id)
+                batch.setData(["uid": friendUser.id, "username": friendUser.username], forDocument: currentUserFriendRef)
+
+                // Add the current user to the friend's friends list
+                let userFriendRef = friendsCollection.document(friendUser.id).collection("friendsList").document(currentUserID)
+                batch.setData(["uid": currentUserID, "username": currentUsername], forDocument: userFriendRef)
+
+                batch.commit { error in
+                    if let error = error {
+                        print("Error adding friend to friends collection: \(error.localizedDescription)")
+                        return
+                    }
+                    print("Both users have been added to each other's friends list")
+                    self.fetchIncomingRequests()
+                }
+            } else {
+                print("Current user document does not exist")
+            }
+        }
+    }
     private func rejectFriendRequest(from user: User) {
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
 

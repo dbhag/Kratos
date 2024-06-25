@@ -37,6 +37,13 @@ struct ContentView: View {
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: geometry.size.width * 0.13, height: geometry.size.height * 0.13)
                                 .offset(x: 0, y: -geometry.size.height * 0.07)
+                            NavigationLink(destination: AddFriendsView()) {
+                                Text("Add Friends")
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .cornerRadius(10)
+                            }
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
