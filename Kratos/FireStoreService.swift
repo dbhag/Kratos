@@ -5,6 +5,7 @@ import FirebaseFirestoreSwift
 
 class FirestoreService: ObservableObject {
     @Published var leaderboardEntries: [LeaderboardEntry] = []
+    @Published var recentWorkouts: [RecentWorkout] = []
 
     private let db = Firestore.firestore()
     private var listener: ListenerRegistration?
@@ -16,7 +17,6 @@ class FirestoreService: ObservableObject {
     func fetchFriendsLeaderboardEntries() {
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
 
-        // Fetch the current user's data
         db.collection("users").document(currentUserID).getDocument { (document, error) in
             if let document = document, document.exists {
                 let currentUserData = document.data()
@@ -26,7 +26,6 @@ class FirestoreService: ObservableObject {
                     score: currentUserData?["score"] as? Int ?? 0
                 )
 
-                // Fetch friends data
                 self.db.collection("friends")
                     .document(currentUserID)
                     .collection("friendsList")
@@ -59,7 +58,7 @@ class FirestoreService: ObservableObject {
 
         db.collection("users")
             .whereField("uid", in: friendIDs)
-            .getDocuments(source: .default) { snapshot, error in
+            .getDocuments { snapshot, error in
                 if let error = error {
                     print("Error fetching friend data: \(error)")
                     return
@@ -74,6 +73,54 @@ class FirestoreService: ObservableObject {
                 self.leaderboardEntries = friendsEntries.sorted(by: { $0.score > $1.score })
             }
     }
+
+    func fetchFriendsRecentWorkouts() {
+            guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+
+            // Fetch friends data
+            self.db.collection("friends")
+                .document(currentUserID)
+                .collection("friendsList")
+                .getDocuments { snapshot, error in
+                    if let error = error {
+                        print("Error fetching friends: \(error)")
+                        return
+                    }
+
+                    let friendIDs = snapshot?.documents.compactMap { $0.documentID } ?? []
+
+                    guard !friendIDs.isEmpty else {
+                        self.recentWorkouts = []
+                        return
+                    }
+
+                    self.fetchRecentWorkoutsData(friendIDs: friendIDs)
+                }
+        }
+
+        private func fetchRecentWorkoutsData(friendIDs: [String]) {
+            guard !friendIDs.isEmpty else {
+                self.recentWorkouts = []
+                return
+            }
+
+            db.collection("users")
+                .whereField("uid", in: friendIDs)
+                .getDocuments(source: .default) { snapshot, error in
+                    if let error = error {
+                        print("Error fetching friend data: \(error)")
+                        return
+                    }
+
+                    let friendWorkouts = snapshot?.documents.compactMap { document -> RecentWorkout? in
+                        let data = document.data()
+                        guard let username = data["username"] as? String,
+                              let recentWorkout = data["recentWorkout"] as? Timestamp else { return nil }
+                        return RecentWorkout(id: document.documentID, username: username, recentWorkout: recentWorkout.dateValue())
+                    } ?? []
+                    self.recentWorkouts = friendWorkouts.sorted(by: { $0.recentWorkout > $1.recentWorkout })
+                }
+        }
 
     func addEntry(_ entry: LeaderboardEntry) {
         db.collection("leaderboard").addDocument(data: [
@@ -105,5 +152,11 @@ struct LeaderboardEntry: Identifiable {
     var id: String
     var name: String
     var score: Int
+}
+
+struct RecentWorkout: Identifiable {
+    var id: String
+    var username: String
+    var recentWorkout: Date
 }
 

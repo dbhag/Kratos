@@ -5,8 +5,10 @@
 //  Created by Dhruv Bhagavatula on 6/11/24.
 // 
 import SwiftUI
+import FirebaseFirestore
 
 struct ContentView: View {
+    @ObservedObject var firestoreService = FirestoreService()
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
@@ -58,8 +60,9 @@ struct ContentView: View {
                                     .scaledToFit()
                                     .frame(width: geometry.size.width * 0.2, height: geometry.size.height * 0.1)
                                     .padding(.bottom, geometry.size.height * 0.02)
-                                    .offset(y: geometry.size.height * 0.68)
                             }
+                            .offset(y: geometry.size.height * 0.68)
+                            .buttonStyle(PlainButtonStyle())
                             
                             Image(.rectangle41)
                                 .resizable()
@@ -78,12 +81,22 @@ struct ContentView: View {
                                 .background(Color.white.opacity(0.09))
                                 .cornerRadius(24)
                                 .shadow(color: Color.white.opacity(0.5), radius: 50, x: 5, y: 5)
-                            
-                            Text("Friend Info")
-                                .font(Font.custom("AmericanTypewriter", size: geometry.size.width * 0.06))
-                                .tracking(0.38)
-                                .lineSpacing(24)
-                                .foregroundColor(.white)
+                            VStack {
+                                ForEach(firestoreService.recentWorkouts.prefix(2)) { workout in
+                                    HStack {
+                                        Text(workout.username)
+                                            .foregroundColor(.white)
+                                            .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
+                                            .padding(.trailing, 75)
+    
+                                        Text("\(timeAgoSinceDate(workout.recentWorkout))")
+                                            .foregroundColor(.white)
+                                            .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
+                                    }
+                                    .padding(.vertical, 5)
+                                    .padding(.horizontal)
+                                }
+                            }
                         }
                         .padding(.vertical, geometry.size.height * 0.05)
                         
@@ -123,10 +136,46 @@ struct ContentView: View {
                         .offset(x: 0, y: geometry.size.height * 0.08)
                         .opacity(0.75)
                     }
+                    .onAppear {
+                        firestoreService.fetchFriendsRecentWorkouts()
+                    }
                 }
             }
         }
         .navigationBarBackButtonHidden(true)
+    }
+}
+func timeAgoSinceDate(_ date: Date) -> String {
+    let calendar = Calendar.current
+    let now = Date()
+    let components = calendar.dateComponents([.minute, .hour, .day, .weekOfYear, .month, .year], from: date, to: now)
+
+    if let year = components.year, year >= 2 {
+        return "\(year) years ago"
+    } else if let year = components.year, year >= 1 {
+        return "Last year"
+    } else if let month = components.month, month >= 2 {
+        return "\(month) months ago"
+    } else if let month = components.month, month >= 1 {
+        return "Last month"
+    } else if let week = components.weekOfYear, week >= 2 {
+        return "\(week) weeks ago"
+    } else if let week = components.weekOfYear, week >= 1 {
+        return "Last week"
+    } else if let day = components.day, day >= 2 {
+        return "\(day) days ago"
+    } else if let day = components.day, day >= 1 {
+        return "Yesterday"
+    } else if let hour = components.hour, hour >= 2 {
+        return "\(hour) hours ago"
+    } else if let hour = components.hour, hour >= 1 {
+        return "An hour ago"
+    } else if let minute = components.minute, minute >= 2 {
+        return "\(minute) minutes ago"
+    } else if let minute = components.minute, minute >= 1 {
+        return "A minute ago"
+    } else {
+        return "Just now"
     }
 }
 #Preview {

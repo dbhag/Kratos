@@ -6,13 +6,13 @@ struct User: Identifiable {
     let id: String
     let username: String
     let email: String
-    var recentWorkouts: [Timestamp]
+    var recentWorkout: Timestamp?
     
-    init(id: String, username: String, email: String, recentWorkouts: [Timestamp] = []) {
+    init(id: String, username: String, email: String, recentWorkout: Timestamp? = nil) {
             self.id = id
             self.username = username
             self.email = email
-            self.recentWorkouts = recentWorkouts
+            self.recentWorkout = recentWorkout
     }
 }
 

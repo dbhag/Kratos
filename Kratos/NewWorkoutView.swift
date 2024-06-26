@@ -7,6 +7,7 @@ struct NewWorkoutView: View {
     @State private var isFriendsSelected = true
     @State private var text: String = ""
     @EnvironmentObject var workoutModel: WorkoutModel
+    private let db = Firestore.firestore()
 
     var body: some View {
         GeometryReader { geometry in
@@ -89,8 +90,8 @@ struct NewWorkoutView: View {
                     
                     Button(action: {
                         if !text.isEmpty {
-                            workoutModel.workouts.append(text)
-                            text = ""
+                            //workoutModel.workouts.append(text)
+                            //text = ""
                             logWorkoutTimestamp()
                         }
                     }) {
@@ -155,35 +156,20 @@ struct NewWorkoutView: View {
         .navigationBarBackButtonHidden(true)
     }
     func logWorkoutTimestamp() {
-            guard let userID = Auth.auth().currentUser?.uid else { return }
-            let userRef = Firestore.firestore().collection("users").document(userID)
-            let newWorkoutTimestamp = Timestamp()
+        guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+                let userRef = db.collection("users").document(currentUserID)
 
-            userRef.getDocument { document, error in
-                if let document = document, document.exists {
-                    var recentWorkouts = document.data()?["recentWorkouts"] as? [Timestamp] ?? []
-                    recentWorkouts.append(newWorkoutTimestamp)
-                    
-                    // Keep only the last two workouts
-                    if recentWorkouts.count > 2 {
-                        recentWorkouts = Array(recentWorkouts.suffix(2))
+                userRef.updateData([
+                    "recentWorkout": FieldValue.serverTimestamp()
+                ]) { error in
+                    if let error = error {
+                        print("Error updating recent workout: \(error.localizedDescription)")
+                    } else {
+                        print("Recent workout timestamp updated successfully.")
                     }
-
-                    userRef.updateData([
-                        "recentWorkouts": recentWorkouts
-                    ]) { error in
-                        if let error = error {
-                            print("Error updating recent workouts: \(error.localizedDescription)")
-                        } else {
-                            print("Recent workouts updated successfully")
-                        }
-                    }
-                } else {
-                    print("User document does not exist")
                 }
             }
         }
-    }
 
 #Preview {
     NewWorkoutView()
