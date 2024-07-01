@@ -75,55 +75,6 @@ struct LeaderBoardView: View {
                         .scrollContentBackground(.hidden)
                         .padding(.top, geometry.size.height * 0.01)
 
-                        Image(.rectangle41)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geometry.size.width, height: geometry.size.height * 0.3)
-                            .padding(.vertical, geometry.size.height * 0.03)
-                        
-                        Spacer()
-                           
-                        Image(.plusplus)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geometry.size.width * 0.2, height: geometry.size.height * 0.1)
-                            .padding(.bottom, geometry.size.height * 0.02)
-                            .offset(y: -geometry.size.height * 0.32)
-        
-                        HStack(spacing: geometry.size.width * 0.15) {
-                            NavigationLink(destination: ContentView()) {
-                                Image(.frame1)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
-                            }
-                            
-                            Image(.vector)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
-                                .offset(x: -geometry.size.width * 0.07)
-                            
-                            NavigationLink(destination: LeaderBoardView()) {
-                                Image(.vector1)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
-                                    .offset(x: geometry.size.width * 0.058)
-                            }
-                            
-                            NavigationLink(destination: ProfileView()) {
-                                Image(.iconamoonProfile)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
-                                    .offset(y: geometry.size.height * 0.001)
-                            }
-                        }
-                        .padding(.bottom, geometry.size.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.07))
-                        .frame(width: geometry.size.width * 0.9)
-                        .offset(x: 0, y: -geometry.size.height * 0.36)
-                        .opacity(0.75)
                     }
                     .onAppear {
                         firestoreService.fetchFriendsLeaderboardEntries()

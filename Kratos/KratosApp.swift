@@ -34,10 +34,14 @@ struct YourApp: App {
 
   var body: some Scene {
     WindowGroup {
-      NavigationView {
-        LoginView()
+        if authViewModel.state == .signedIn {
+            MainContainerView()
+                .environmentObject(authViewModel)
+        } 
+        else {
+            LoginView()
             .environmentObject(authViewModel)
-      }
+        }
     }
   }
 }

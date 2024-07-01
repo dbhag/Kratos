@@ -6,6 +6,8 @@ import FirebaseFirestoreSwift
 class FirestoreService: ObservableObject {
     @Published var leaderboardEntries: [LeaderboardEntry] = []
     @Published var recentWorkouts: [RecentWorkout] = []
+    @Published var previousWorkouts: [Workout] = []
+
 
     private let db = Firestore.firestore()
     private var listener: ListenerRegistration?
@@ -121,6 +123,28 @@ class FirestoreService: ObservableObject {
                     self.recentWorkouts = friendWorkouts.sorted(by: { $0.recentWorkout > $1.recentWorkout })
                 }
         }
+    func fetchPreviousWorkouts() {
+        guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+
+        db.collection("users").document(currentUserID).getDocument { (document, error) in
+            if let document = document, document.exists {
+                let data = document.data()
+                let workoutEntries = data?["workouts"] as? [[String: Any]] ?? []
+
+                self.previousWorkouts = workoutEntries.compactMap { entry in
+                    guard let exercises = entry["workouts"] as? [String],
+                          let timestamp = entry["timestamp"] as? Timestamp else {
+                        return nil
+                    }
+                    return Workout(id: UUID().uuidString, exercises: exercises, timestamp: timestamp.dateValue())
+                }
+
+                print("Fetched workouts: \(self.previousWorkouts)")  // Debug print
+            } else {
+                print("Document does not exist or error: \(String(describing: error))")  // Debug print
+            }
+        }
+    }
 
     func addEntry(_ entry: LeaderboardEntry) {
         db.collection("leaderboard").addDocument(data: [
@@ -158,5 +182,11 @@ struct RecentWorkout: Identifiable {
     var id: String
     var username: String
     var recentWorkout: Date
+}
+
+struct Workout: Identifiable {
+    var id:  String
+    var exercises: [String]
+    var timestamp: Date
 }
 

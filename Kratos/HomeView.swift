@@ -49,30 +49,8 @@ struct ContentView: View {
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
-                        .padding(.top, geometry.size.height * 0.05)
-                        
-                        VStack{
-                            Spacer()
-                            NavigationLink(destination: NewWorkoutView())
-                            {
-                                Image(.plusplus)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geometry.size.width * 0.2, height: geometry.size.height * 0.1)
-                                    .padding(.bottom, geometry.size.height * 0.02)
-                            }
-                            .offset(y: geometry.size.height * 0.68)
-                            .buttonStyle(PlainButtonStyle())
-                            
-                            Image(.rectangle41)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geometry.size.width)
-                                .padding(.vertical, geometry.size.height * 0.05)
-                                .offset(y: geometry.size.height * 0.58)
-                            
-                            Spacer()
-                        }
+                        .padding(.top, -geometry.size.height * 0.07)
+            
                         
                         ZStack {
                             Rectangle()
@@ -98,43 +76,10 @@ struct ContentView: View {
                                 }
                             }
                         }
-                        .padding(.vertical, geometry.size.height * 0.05)
+                        .padding(.vertical, geometry.size.height * 0.6)
                         
                         Spacer()
                         
-                        HStack(spacing: geometry.size.width * 0.15) {
-                            NavigationLink(destination: ContentView())
-                            {
-                                Image(.frame1)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
-                            }
-                            Image(.vector)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
-                                .offset(x: -geometry.size.width * 0.07)
-                            NavigationLink(destination: LeaderBoardView())
-                            {
-                                Image(.vector1)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
-                                    .offset(x: geometry.size.width * 0.058)
-                            }
-                            NavigationLink(destination: ProfileView()) {
-                                Image(.iconamoonProfile)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
-                                    .offset(y: geometry.size.height * 0.004)
-                            }
-                        }
-                        .padding(.bottom, geometry.size.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.07))
-                        .frame(width: geometry.size.width * 0.9)
-                        .offset(x: 0, y: geometry.size.height * 0.08)
-                        .opacity(0.75)
                     }
                     .onAppear {
                         firestoreService.fetchFriendsRecentWorkouts()

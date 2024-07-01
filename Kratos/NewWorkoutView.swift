@@ -125,50 +125,7 @@ struct NewWorkoutView: View {
                             .offset(y: -geometry.size.height * 0.03)
                     }
                     .padding(.bottom, geometry.size.height * 0.02)
-                    
-                    Image(.rectangle41)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geometry.size.width * 0.9)
-                            .offset(y: geometry.size.height * 0.1)
-                            .padding(.vertical, geometry.size.height * 0.02)
-                    
                     Spacer()
-
-                    HStack(spacing: geometry.size.width * 0.15) {
-                        NavigationLink(destination: ContentView()) {
-                            Image(.frame1)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
-                        }
-
-                        Image(.vector)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
-                            .offset(x: -geometry.size.width * 0.07)
-
-                        NavigationLink(destination: LeaderBoardView()) {
-                            Image(.vector1)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
-                                .offset(x: geometry.size.width * 0.058)
-                        }
-
-                        NavigationLink(destination: ProfileView()) {
-                            Image(.iconamoonProfile)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
-                                .offset(y: geometry.size.height * 0.004)
-                        }
-                    }
-                    .padding(.bottom, geometry.size.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.07))
-                    .frame(width: geometry.size.width * 0.9)
-                    .offset(x: 0, y: geometry.size.height * -0.075)
-                    .opacity(0.75)
                 }
             }
         }
@@ -182,17 +139,60 @@ struct NewWorkoutView: View {
         var selectedWorkouts = Array(selectedLiftOptions)
         selectedWorkouts.append(contentsOf: selectedCardioOptions)
         
-        userRef.updateData([
-            "recentWorkout": FieldValue.serverTimestamp(),
-            "workouts": selectedWorkouts
-        ]) { error in
+        // Get the server timestamp first
+        db.collection("server_time").document("current_time").setData(["timestamp": FieldValue.serverTimestamp()]) { error in
             if let error = error {
-                print("Error updating recent workout: \(error.localizedDescription)")
-            } else {
-                print("Recent workout timestamp updated successfully.")
+                print("Error getting server timestamp: \(error.localizedDescription)")
+                return
+            }
+            
+            db.collection("server_time").document("current_time").getDocument { (document, error) in
+                if let document = document, document.exists, let timestamp = document.data()?["timestamp"] as? Timestamp {
+                    
+                    userRef.getDocument { document, error in
+                        if let document = document, document.exists {
+                            var workouts = document.data()?["workouts"] as? [[String: Any]] ?? []
+                            let newWorkout = [
+                                "timestamp": timestamp,
+                                "workouts": selectedWorkouts
+                            ] as [String : Any]
+                            
+                            workouts.append(newWorkout)
+                            
+                            userRef.updateData([
+                                "workouts": workouts,
+                                "recentWorkout": timestamp
+                            ]) { error in
+                                if let error = error {
+                                    print("Error updating workouts: \(error.localizedDescription)")
+                                } else {
+                                    print("Workouts and recent workout timestamp updated successfully.")
+                                }
+                            }
+                        } else {
+                            let newWorkout = [
+                                "timestamp": timestamp,
+                                "workouts": selectedWorkouts
+                            ] as [String : Any]
+                            
+                            userRef.setData([
+                                "workouts": [newWorkout],
+                                "recentWorkout": timestamp
+                            ]) { error in
+                                if let error = error {
+                                    print("Error setting workouts: \(error.localizedDescription)")
+                                } else {
+                                    print("Workouts and recent workout timestamp set successfully.")
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+
+
     func clearSelections() {
             selectedLiftOptions.removeAll()
             selectedCardioOptions.removeAll()
