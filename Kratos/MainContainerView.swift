@@ -8,7 +8,6 @@ enum Tab {
     case leaderboard
     case profile
     case login
-    case createUsername
     case addFriends
     case newWorkout
     case progress
@@ -35,8 +34,6 @@ struct MainContainerView: View {
                         ProfileView()
                     case .login:
                         LoginView()
-                    case .createUsername:
-                        CreateAccountView()
                     case .addFriends:
                         AddFriendsView()
                     case .newWorkout:
@@ -61,7 +58,7 @@ struct MainContainerView: View {
                 fetchStreak()
             }
 
-            if selectedTab != .login && selectedTab != .createUsername {
+            if selectedTab != .login{
                 VStack {
                     Spacer()
                     TaskbarView(selectedTab: $selectedTab, showPlusButton: $showPlusButton, streak: $streak)
@@ -95,24 +92,27 @@ struct TaskbarView: View {
                 // Add Friends button at the top
                 HStack {
                     Spacer()
-                    if streak > 0 {
+                    if streak > 0 && showPlusButton {
                         StreakFlameView(streak: streak)
-                        //.frame(width: geometry.size.width * 0.13, height: geometry.size.height * 0.13)
+                            .frame(width: geometry.size.width * 0.08, height: geometry.size.height * 0.08)
                         //.padding(.leading, geometry.size.width * 0.05)
+                            .offset(x: geometry.size.width * 0.33, y: -geometry.size.height * 0.005)
                     }
                     Spacer()
-                    Button(action: {
-                        selectedTab = .addFriends
-                    }) {
-                        Image(systemName: "person.crop.circle.badge.plus")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
-                            .foregroundColor(.white)
+                    if showPlusButton {
+                        Button(action: {
+                            selectedTab = .addFriends
+                        }) {
+                            Image(systemName: "person.crop.circle.badge.plus")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                        .contentShape(Rectangle())
+                        .offset(x: geometry.size.width * 0.02, y: -geometry.size.height * 0.003) // Adjust the offset as needed
                     }
-                    .padding()
-                    .contentShape(Rectangle())
-                    .offset(x: geometry.size.width * 0.02, y: -geometry.size.height * 0.0035) // Adjust the offset as needed
                 }
                 .padding(.trailing, geometry.size.width * 0.05)
 
@@ -193,16 +193,23 @@ struct StreakFlameView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image(.giphy2)
+                Image(systemName: "flame")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: geometry.size.width * 0.13, height: geometry.size.height * 0.13)
-                    .offset(x: 0, y: geometry.size.height * 0.08)
-
+                    .foregroundColor(.clear)
+                LinearGradient(
+                     gradient: Gradient(colors: [Color.orange, Color.red]),
+                     startPoint: .bottom,
+                     endPoint: .top
+                )
+                .mask(
+                     Image(systemName: "flame.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                )
                 Text("\(streak)")
                     .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                     .foregroundColor(.white)
-                    .offset(x: 0, y: -geometry.size.height * 0.07)
             }
         }
     }

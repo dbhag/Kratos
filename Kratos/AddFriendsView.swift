@@ -110,7 +110,7 @@ struct AddFriendsView: View {
                         .background(Color.gray.opacity(0.8))
                         .cornerRadius(10)
                         .padding(.horizontal, geometry.size.width * 0.05)
-                        .offset(y: geometry.size.height * 0.15)
+                        .offset(y: geometry.size.height * 0)
                 }
             }
         }

@@ -20,7 +20,7 @@ struct PreviousWorkoutsView: View {
                     // Header with Text and Flame Image
                     HStack(spacing: geometry.size.width * 0.05) {
                         Text("Past Workouts")
-                            .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.075))
+                            .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
                             .tracking(0.36)
                             .minimumScaleFactor(0.8)
                             .foregroundColor(.white)

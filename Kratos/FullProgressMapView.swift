@@ -23,11 +23,11 @@ struct FullProgressMapView: View {
                             ForEach((0..<7).reversed(), id: \.self) { index in
                                 VStack {
                                     if index != 6 {
-                                        if isInBetween(for: index * 200) {
+                                        if isInBetween(for: scoreForIndex(index)) {
                                             HStack {
                                                 Text("\(firestoreService.userScore) points")
                                                     .foregroundColor(.white)
-                                                    .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
+                                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                                             }
                                         }
                                         Rectangle()
@@ -35,18 +35,17 @@ struct FullProgressMapView: View {
                                             .frame(width: 5, height: 40)
                                     }
                                     
-                                    if let modelName = getModelName(for: index * 200) {
+                                    if let modelName = getModelName(for: scoreForIndex(index)) {
                                         SceneView(
                                             scene: {
                                                 let scene = SCNScene(named: modelName)!
                                                 scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
                                                 
-                                                if !isUnlocked(for: index * 200) {
+                                                    /*if !isUnlocked(for: scoreForIndex(index)) {
                                                     let material = SCNMaterial()
                                                     material.diffuse.contents = UIColor.black
                                                     scene.rootNode.childNodes.first?.geometry?.materials = [material]
-                                                }
-                                                
+                                                }*/
                                                 let ambientLight = SCNLight()
                                                 ambientLight.type = .ambient
                                                 ambientLight.color = UIColor(white: 0.8, alpha: 1.0)
@@ -65,7 +64,7 @@ struct FullProgressMapView: View {
                                     }
                                     Text("\(scoreForIndex(index)) points")
                                         .foregroundColor(.white)
-                                        .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                                 }
                                 .id(index)
                             }
@@ -108,9 +107,9 @@ struct FullProgressMapView: View {
         }
     }
     
-    func isUnlocked(for score: Int) -> Bool {
+    /*func isUnlocked(for score: Int) -> Bool {
         return firestoreService.userScore >= score
-    }
+    }*/
 
     func isInBetween(for score: Int) -> Bool {
         let nextScore = score + 200
