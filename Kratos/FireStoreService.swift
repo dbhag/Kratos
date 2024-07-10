@@ -7,7 +7,9 @@ class FirestoreService: ObservableObject {
     @Published var leaderboardEntries: [LeaderboardEntry] = []
     @Published var recentWorkouts: [RecentWorkout] = []
     @Published var previousWorkouts: [Workout] = []
-
+    @Published var longestStreak: Int = 0
+    @Published var totalWorkouts: Int = 0
+    @Published var userScore: Int = 0
 
     private let db = Firestore.firestore()
     private var listener: ListenerRegistration?
@@ -137,7 +139,7 @@ class FirestoreService: ObservableObject {
                         return nil
                     }
                     return Workout(id: UUID().uuidString, exercises: exercises, timestamp: timestamp.dateValue())
-                }
+                }.sorted(by: { $0.timestamp > $1.timestamp })
 
                 print("Fetched workouts: \(self.previousWorkouts)")  // Debug print
             } else {
@@ -167,6 +169,30 @@ class FirestoreService: ObservableObject {
                     "username": Auth.auth().currentUser?.displayName ?? "Unknown",
                     "score": 0
                 ])
+            }
+        }
+    }
+    func fetchUserStats() {
+            guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+
+            db.collection("users").document(currentUserID).getDocument { (document, error) in
+                if let document = document, document.exists {
+                    let data = document.data()
+                    self.longestStreak = data?["longestStreak"] as? Int ?? 0
+                    self.totalWorkouts = data?["totalWorkouts"] as? Int ?? 0
+                } else {
+                    print("Document does not exist or error: \(String(describing: error))")
+                }
+            }
+        }
+    func fetchUserScore() {
+        guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+        
+        db.collection("users").document(currentUserID).getDocument { document, error in
+            if let document = document, document.exists, let data = document.data() {
+                self.userScore = data["score"] as? Int ?? 0
+            } else {
+                print("Error fetching user score: \(String(describing: error?.localizedDescription))")
             }
         }
     }

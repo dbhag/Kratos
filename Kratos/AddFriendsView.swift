@@ -40,7 +40,7 @@ struct AddFriendsView: View {
                     // Header with Text and Flame Image
                     HStack(spacing: geometry.size.width * 0.05) {
                         Text("Add Friends")
-                            .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.075))
+                            .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
                             .tracking(0.36)
                             .minimumScaleFactor(0.8)
                             .foregroundColor(.white)
@@ -71,7 +71,7 @@ struct AddFriendsView: View {
                         }
                     }
                     .padding()
-                    
+                    .padding(.top, -geometry.size.height * 0.05)
                     // Incoming Friend Requests
                     Text("Incoming Friend Requests")
                         .font(.headline)
@@ -107,7 +107,7 @@ struct AddFriendsView: View {
                 if showOverlay {
                     overlayView
                         .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.5)
-                        .background(Color.black.opacity(0.8))
+                        .background(Color.gray.opacity(0.8))
                         .cornerRadius(10)
                         .padding(.horizontal, geometry.size.width * 0.05)
                         .offset(y: geometry.size.height * 0.15)

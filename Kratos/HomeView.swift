@@ -1,57 +1,128 @@
-//
-//  ContentView.swift
-//  Kratos
-//
-//  Created by Dhruv Bhagavatula on 6/11/24.
-// 
 import SwiftUI
 import FirebaseFirestore
+import SceneKit
 
 struct ContentView: View {
     @ObservedObject var firestoreService = FirestoreService()
+    @Binding var selectedTab: Tab
+    @Binding var showPlusButton: Bool
+
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
                     Color(red: 0.16, green: 0.18, blue: 0.2)
                         .edgesIgnoringSafeArea(.all)
-                    RadialGradient(gradient: Gradient(colors: [
-                        Color.white.opacity(0.5),
-                        Color.white.opacity(0.0)
-                    ]), center: .center, startRadius: 50, endRadius: 300)
-                    .blendMode(.overlay)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-                    .edgesIgnoringSafeArea(.all)
                     
                     VStack {
                         // Header with Text and Flame Image
                         HStack(spacing: geometry.size.width * 0.05) {
                             Text("Kratos")
-                                .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.075))
+                                .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
                                 .tracking(0.36)
                                 .minimumScaleFactor(0.8)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .offset(x: 0, y: -geometry.size.height * 0.05)
-                            
-                            Image(.giphy2)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: geometry.size.width * 0.13, height: geometry.size.height * 0.13)
-                                .offset(x: 0, y: -geometry.size.height * 0.07)
-                            NavigationLink(destination: AddFriendsView()) {
-                                Text("Add Friends")
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .cornerRadius(10)
-                            }
+                                .offset(x: 0, y: -geometry.size.height * 0.06)
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
-                        .padding(.top, -geometry.size.height * 0.07)
-            
+                        .padding(.top, -geometry.size.height * 0.14)
+
+                        // 3D Model View
+                        if let modelName = getModelName(for: firestoreService.userScore) {
+                            SceneView(
+                                scene: {
+                                    let scene = SCNScene(named: modelName)!
+                                    
+                                    // Set the scene background color to match the app's theme
+                                    scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
+                                    
+                                    // Add custom lighting
+                                    let ambientLight = SCNLight()
+                                    ambientLight.type = .ambient
+                                    ambientLight.color = UIColor(white: 0.8, alpha: 1.0)
+                                    
+                                    let ambientLightNode = SCNNode()
+                                    ambientLightNode.light = ambientLight
+                                    scene.rootNode.addChildNode(ambientLightNode)
+                                    
+                                    return scene
+                                }(),
+                                options: [.autoenablesDefaultLighting, .allowsCameraControl]
+                            )
+                            .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.4)
+                            .background(Color(red: 0.16, green: 0.18, blue: 0.2)) // Ensure background is clear
+                            .cornerRadius(20)
+                            .padding(.top, -14)
+                            .offset(y: -geometry.size.height * 0.025)
+                        }
+
+                        // Progress Snippet View
+                        ZStack {
+                            NavigationLink(destination: FullProgressMapView(firestoreService: firestoreService, showPlusButton: $showPlusButton)) {
+                                Rectangle()
+                                    .foregroundColor(.clear)
+                                    .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.1)
+                                    //.background(Color.white.opacity(0.09))
+                                    .cornerRadius(24)
+                                    .shadow(color: Color.white.opacity(0.5), radius: 50, x: 5, y: 5)
+                            }
+                            HStack {
+                                if let modelName = getModelName(for: firestoreService.userScore) {
+                                    SceneView(
+                                        scene: {
+                                            let scene = SCNScene(named: modelName)!
+                                            scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
+                                            return scene
+                                        }(),
+                                        options: [.autoenablesDefaultLighting, .allowsCameraControl]
+                                    )
+                                    .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.1)
+                                    .cornerRadius(20)
+                                    .padding(.leading, 50)
+                                }
+                                
+                                let nextAnimal = getNextAnimal(for: firestoreService.userScore)
+                                let pointsToNextAnimal = nextAnimal.points - firestoreService.userScore
+
+                                VStack {
+                                    Text("\(pointsToNextAnimal) points")
+                                        .foregroundColor(.white)
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                    
+                                    GeometryReader { geo in
+                                        Path { path in
+                                            let width = geo.size.width
+                                            let height = geo.size.height
+                                            path.move(to: CGPoint(x: 0, y: height / 2))
+                                            path.addLine(to: CGPoint(x: width, y: height / 2))
+                                        }
+                                        .stroke(Color.white, lineWidth: 2)
+                                    }
+                                    .frame(height: 20)
+                                }
+                                
+                                if let nextModelName = nextAnimal.modelName {
+                                    SceneView(
+                                        scene: {
+                                            let scene = SCNScene(named: nextModelName)!
+                                            scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
+                                            return scene
+                                        }(),
+                                        options: [.autoenablesDefaultLighting, .allowsCameraControl]
+                                    )
+                                    .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.1)
+                                    //.background(Color.white.opacity(0.09))
+                                    .cornerRadius(20)
+                                    .padding(.trailing, 50)
+                                }
+                            }
+                        }
+                        .padding(.vertical, geometry.size.height * 0.02)
+                        .offset(y: -geometry.size.height * 0.01)
                         
+                        // Recent Workouts View
                         ZStack {
                             Rectangle()
                                 .foregroundColor(.clear)
@@ -64,32 +135,77 @@ struct ContentView: View {
                                     HStack {
                                         Text(workout.username)
                                             .foregroundColor(.white)
-                                            .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
-                                            .padding(.trailing, 75)
+                                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                            .padding(.trailing, 115)
     
                                         Text("\(timeAgoSinceDate(workout.recentWorkout))")
                                             .foregroundColor(.white)
-                                            .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
+                                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                                     }
                                     .padding(.vertical, 5)
                                     .padding(.horizontal)
                                 }
                             }
                         }
-                        .padding(.vertical, geometry.size.height * 0.6)
-                        
-                        Spacer()
-                        
+                        .padding(.vertical, geometry.size.height * 0.04)
+                        .offset(y: -geometry.size.height * 0.045)
                     }
+                    .offset(y: geometry.size.height * -0.01)
                     .onAppear {
                         firestoreService.fetchFriendsRecentWorkouts()
+                        firestoreService.fetchUserScore() // Fetch user score on appear
                     }
                 }
             }
         }
         .navigationBarBackButtonHidden(true)
     }
+
+    // Helper function to get model name based on score
+    func getModelName(for score: Int) -> String? {
+        switch score {
+        case 0..<200:
+            return "frog.usdz"
+        case 200..<400:
+            return "cat.usdz"
+        case 400..<700:
+            return "dog.usdz"
+        case 700..<1000:
+            return "deer.usdz"
+        case 1000..<1500:
+            return "bear.usdz"
+        case 1500..<2000:
+            return "bison.usdz"
+        case 2000...:
+            return "penguin.usdz"
+        default:
+            return nil
+        }
+    }
+    
+    // Helper function to get the next animal's model name and points
+    func getNextAnimal(for score: Int) -> (modelName: String?, points: Int) {
+        switch score {
+        case 0..<200:
+            return ("cat.usdz", 200)
+        case 200..<400:
+            return ("dog.usdz", 400)
+        case 400..<700:
+            return ("deer.usdz", 700)
+        case 700..<1000:
+            return ("bear.usdz", 1000)
+        case 1000..<1500:
+            return ("bison.usdz", 1500)
+        case 1500..<2000:
+            return ("penguin.usdz", 2000)
+        case 2000...:
+            return (nil, 2000) // max level reached
+        default:
+            return (nil, 0)
+        }
+    }
 }
+
 func timeAgoSinceDate(_ date: Date) -> String {
     let calendar = Calendar.current
     let now = Date()
@@ -123,6 +239,7 @@ func timeAgoSinceDate(_ date: Date) -> String {
         return "Just now"
     }
 }
+
 #Preview {
-    ContentView()
+    ContentView(selectedTab: .constant(.home), showPlusButton: .constant(true))
 }

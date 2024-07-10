@@ -76,24 +76,47 @@ class AuthViewModel: ObservableObject {
                 }
             }
         }
-    func saveUsername(_ username: String) {
+    func checkAndSaveUsername(_ username: String, completion: @escaping (Bool, String) -> Void) {
             guard let user = currentUser else { return }
-            let userRef = db.collection("users").document(user.uid)
-            
-            userRef.setData([
-                "uid": user.uid,
-                "email": user.email ?? "",
-                "username": username,
-                "score": 0,
-                "recentWorkouts": []
-            ]) { error in
+
+            let usersRef = db.collection("users")
+
+            // Check if the username already exists
+            usersRef.whereField("username", isEqualTo: username).getDocuments { (querySnapshot, error) in
                 if let error = error {
-                    print("Error storing user data: \(error.localizedDescription)")
-                } else {
-                    self.state = .signedIn
+                    print("Error checking username: \(error.localizedDescription)")
+                    completion(false, "Error checking username. Please try again.")
+                    return
+                }
+
+                if let documents = querySnapshot?.documents, !documents.isEmpty {
+                    // Username already exists
+                    print("Username already exists. Please choose a different one.")
+                    completion(false, "Username already exists. Please choose a different one.")
+                    return
+                }
+
+                // Username does not exist, proceed with saving the new username
+                let userRef = usersRef.document(user.uid)
+                
+                userRef.setData([
+                    "uid": user.uid,
+                    "email": user.email ?? "",
+                    "username": username,
+                    "score": 0,
+                    "recentWorkout": []
+                ]) { error in
+                    if let error = error {
+                        print("Error storing user data: \(error.localizedDescription)")
+                        completion(false, "Error storing user data. Please try again.")
+                    } else {
+                        //self.state = .signedIn
+                        completion(true, "")
+                    }
                 }
             }
         }
+
 }
 
 struct ErrorMessage: Identifiable {
@@ -144,7 +167,7 @@ struct LoginView: View {
                         Alert(title: Text("Sign In Failed"), message: Text(error.message), dismissButton: .default(Text("OK")))
                     }
                     .background(
-                        NavigationLink(destination: ContentView(), isActive: .constant(authViewModel.state == .signedIn)) {
+                        NavigationLink(destination: MainContainerView(), isActive: .constant(authViewModel.state == .signedIn)) {
                             EmptyView()
                         }
                     )
@@ -162,9 +185,13 @@ struct LoginView: View {
         }
     }
 }
+
 struct CreateUsernameView: View {
     @EnvironmentObject private var authViewModel: AuthViewModel
     @State private var username: String = ""
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    @State private var navigateToGoals = false
 
     var body: some View {
         VStack {
@@ -179,7 +206,14 @@ struct CreateUsernameView: View {
                 .padding(.horizontal)
 
             Button(action: {
-                authViewModel.saveUsername(username)
+                authViewModel.checkAndSaveUsername(username) { success, message in
+                    if success {
+                        navigateToGoals = true
+                    } else {
+                        alertMessage = message
+                        showAlert = true
+                    }
+                }
             }) {
                 Text("Submit")
                     .font(.headline)
@@ -190,10 +224,20 @@ struct CreateUsernameView: View {
                     .shadow(color: .gray, radius: 5, x: 0, y: 5)
             }
             .padding()
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
+            .background(
+                NavigationLink(destination: WorkoutGoalsView(), isActive: $navigateToGoals) {
+                    EmptyView()
+                }
+            )
         }
         .padding()
     }
 }
+
+
 #Preview {
     LoginView()
 }

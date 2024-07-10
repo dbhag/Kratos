@@ -27,11 +27,6 @@ struct PreviousWorkoutsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .offset(x: 0, y: -geometry.size.height * 0.05)
                         
-                        Image(.giphy2)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: geometry.size.width * 0.13, height: geometry.size.height * 0.13)
-                            .offset(x: 0, y: -geometry.size.height * 0.07)
                     }
                     .padding(.horizontal, geometry.size.width * 0.08)
                     .frame(height: geometry.size.height * 0.1)

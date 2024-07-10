@@ -19,25 +19,19 @@ struct LeaderBoardView: View {
                         // Header with Text and Flame Image
                         HStack(spacing: geometry.size.width * 0.05) {
                             Text("Leaderboard")
-                                .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.075))
+                                .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
                                 .tracking(0.36)
                                 .minimumScaleFactor(0.8)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .offset(x: 0, y: -geometry.size.height * 0.05)
-                            
-                            Image(.giphy2)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: geometry.size.width * 0.13, height: geometry.size.height * 0.13)
-                                .offset(x: 0, y: -geometry.size.height * 0.07)
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
                         .padding(.top, geometry.size.height * 0.05)
 
                         Text("Friends")
-                            .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
+                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                             .foregroundColor(.black)
                             .padding(.vertical, 10)
                             .padding(.horizontal, 20)
@@ -50,11 +44,11 @@ struct LeaderBoardView: View {
                             ForEach(Array(firestoreService.leaderboardEntries.enumerated()), id: \.element.id) { index, entry in
                                 HStack {
                                     Text(entry.name)
-                                        .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                                         .foregroundColor(.white)
                                     Spacer()
                                     Text("\(entry.score)")
-                                        .font(.custom("AmericanTypewriter", size: geometry.size.width * 0.05))
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                                         .foregroundColor(.white)
                                 }
                                 .padding()
@@ -76,6 +70,7 @@ struct LeaderBoardView: View {
                         .padding(.top, geometry.size.height * 0.01)
 
                     }
+                    .offset(y: -geometry.size.height * 0.09)
                     .onAppear {
                         firestoreService.fetchFriendsLeaderboardEntries()
                     }
