@@ -28,11 +28,12 @@ struct FullProgressMapView: View {
                                                 Text("\(firestoreService.userScore) points")
                                                     .foregroundColor(.white)
                                                     .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                    .offset(x: geometry.size.width * 0.14, y: geometry.size.height * 0.095)
                                             }
                                         }
                                         Rectangle()
                                             .fill(Color.gray)
-                                            .frame(width: 5, height: 40)
+                                            .frame(width: geometry.size.width * 0.015, height: geometry.size.height * 0.15)
                                     }
                                     
                                     if let modelName = getModelName(for: scoreForIndex(index)) {
@@ -163,4 +164,3 @@ struct FullProgressMapView: View {
 #Preview {
     FullProgressMapView(firestoreService: FirestoreService(), showPlusButton: .constant(true))
 }
-
