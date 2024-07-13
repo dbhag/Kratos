@@ -39,9 +39,8 @@ struct MainContainerView: View {
                     case .newWorkout:
                         NewWorkoutView()
                     case .progress:
-                        FullProgressMapView(firestoreService: FirestoreService(),showPlusButton: $showPlusButton)
+                        FullProgressMapView(firestoreService: FirestoreService(), showPlusButton: $showPlusButton)
                     }
-                    
                 }
                 .navigationBarHidden(true)
                 .onChange(of: selectedTab) { newTab in
@@ -58,8 +57,21 @@ struct MainContainerView: View {
                 fetchStreak()
             }
 
-            if selectedTab != .login{
+            if selectedTab != .login {
                 VStack {
+                    GeometryReader { geometry in
+                        HStack {
+                            if streak > 0 {
+                                StreakFlameView(streak: streak)
+                                    .frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
+                                    .offset(x: geometry.size.width * 0.64, y: -geometry.size.height * 0.032)
+                            }
+                            else
+                            {
+                                Spacer().frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
+                            }
+                        }
+                    }
                     Spacer()
                     TaskbarView(selectedTab: $selectedTab, showPlusButton: $showPlusButton, streak: $streak)
                 }
@@ -86,18 +98,12 @@ struct TaskbarView: View {
     @Binding var selectedTab: Tab
     @Binding var showPlusButton: Bool
     @Binding var streak: Int
+
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 // Add Friends button at the top
                 HStack {
-                    Spacer()
-                    if streak > 0 && showPlusButton {
-                        StreakFlameView(streak: streak)
-                            .frame(width: geometry.size.width * 0.08, height: geometry.size.height * 0.08)
-                        //.padding(.leading, geometry.size.width * 0.05)
-                            .offset(x: geometry.size.width * 0.33, y: -geometry.size.height * 0.005)
-                    }
                     Spacer()
                     if showPlusButton {
                         Button(action: {
@@ -111,7 +117,7 @@ struct TaskbarView: View {
                         }
                         .padding()
                         .contentShape(Rectangle())
-                        .offset(x: geometry.size.width * 0.02, y: -geometry.size.height * 0.003) // Adjust the offset as needed
+                        .offset(x: geometry.size.width * 0.02, y: -geometry.size.height * 1.01) // Adjust the offset as needed
                     }
                 }
                 .padding(.trailing, geometry.size.width * 0.05)
@@ -123,7 +129,8 @@ struct TaskbarView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: geometry.size.width)
-                        .padding(.vertical, geometry.size.height * 0.05)
+                        //.padding(.vertical, -geometry.size.height * 0.09)
+                        .offset(y: geometry.size.height * 0.07)
 
                     if showPlusButton && selectedTab != .newWorkout {
                         Button(action: {
@@ -132,7 +139,7 @@ struct TaskbarView: View {
                             Image(.plusplus)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: geometry.size.width * 0.2, height: geometry.size.height * 0.1)
+                                .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.2)
                                 .background(Color.clear)
                                 .contentShape(Rectangle())
                         }
@@ -180,7 +187,7 @@ struct TaskbarView: View {
                 }
                 .padding(.bottom, geometry.size.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.07))
                 .frame(width: geometry.size.width * 0.9)
-                .offset(x: 0, y: geometry.size.height * 0.08)
+                .offset(x: 0, y: geometry.size.height * 0.095)
                 .opacity(0.75)
             }
         }
@@ -193,23 +200,13 @@ struct StreakFlameView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image(systemName: "flame")
+                Image(.giphy2)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.clear)
-                LinearGradient(
-                     gradient: Gradient(colors: [Color.orange, Color.red]),
-                     startPoint: .bottom,
-                     endPoint: .top
-                )
-                .mask(
-                     Image(systemName: "flame.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                )
                 Text("\(streak)")
-                    .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                    .foregroundColor(.white)
+                    .font(.custom("Marker Felt", size: geometry.size.width * 0.2))
+                    .foregroundColor(.black)
+                    .offset(x: -geometry.size.width * 0.03, y: geometry.size.height * 0.24)
             }
         }
     }
