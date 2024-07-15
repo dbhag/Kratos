@@ -1,8 +1,15 @@
+//
+//  SettingsWorkoutView.swift
+//  Kratos
+//
+//  Created by Dhruv Bhagavatula on 7/15/24.
+//
+
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 
-struct WorkoutGoalsView: View {
+struct SettingsWorkoutView: View {
     @State private var workoutGoal: Double = 3 // Default value for the slider
     @EnvironmentObject var authViewModel: AuthViewModel
     private let db = Firestore.firestore()
@@ -45,11 +52,6 @@ struct WorkoutGoalsView: View {
 
                     Spacer()
                 }
-                .background(
-                    NavigationLink(destination: MainContainerView(), isActive: $navigateToMainContainer) {
-                        EmptyView()
-                    }
-                )
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -71,5 +73,5 @@ struct WorkoutGoalsView: View {
 }
 
 #Preview {
-    WorkoutGoalsView()
+    SettingsWorkoutView()
 }

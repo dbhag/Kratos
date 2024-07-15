@@ -43,7 +43,7 @@ struct MainContainerView: View {
                     case .progress:
                         FullProgressMapView(firestoreService: FirestoreService(), showPlusButton: $showPlusButton)
                     case .workoutGoals:
-                        WorkoutGoalsView()
+                        SettingsWorkoutView()
                     }
                 }
                 .navigationBarHidden(true)
