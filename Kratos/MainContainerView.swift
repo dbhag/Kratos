@@ -11,12 +11,14 @@ enum Tab {
     case addFriends
     case newWorkout
     case progress
+    case workoutGoals
 }
 
 struct MainContainerView: View {
     @State private var selectedTab: Tab = .home
     @State private var streak: Int = 0
     @State private var showPlusButton: Bool = true
+    @State private var showStreak: Bool = true
     private let db = Firestore.firestore()
     
     var body: some View {
@@ -40,6 +42,8 @@ struct MainContainerView: View {
                         NewWorkoutView()
                     case .progress:
                         FullProgressMapView(firestoreService: FirestoreService(), showPlusButton: $showPlusButton)
+                    case .workoutGoals:
+                        WorkoutGoalsView()
                     }
                 }
                 .navigationBarHidden(true)
@@ -49,6 +53,14 @@ struct MainContainerView: View {
                         showPlusButton = false
                     } else {
                         showPlusButton = true
+                    }
+                    if newTab == .profile || newTab == .workoutGoals
+                    {
+                        showStreak = false
+                    }
+                    else
+                    {
+                        showStreak = true
                     }
                 }
             }
@@ -61,10 +73,24 @@ struct MainContainerView: View {
                 VStack {
                     GeometryReader { geometry in
                         HStack {
-                            if streak > 0 && showPlusButton {
+                            if streak > 0 && showPlusButton && showStreak {
                                 StreakFlameView(streak: streak)
                                     .frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
                                     .offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.045)
+                            }
+                            else if selectedTab == .profile && !showStreak
+                            {
+                                Button(action: {
+                                    selectedTab = .workoutGoals
+                                })
+                                {
+                                    Image(systemName: "gear")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(.white)
+                                        .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.09)
+                                }
+                                .offset(x: geometry.size.width * 0.815, y: geometry.size.height * 0.064)
                             }
                             else
                             {
@@ -74,7 +100,7 @@ struct MainContainerView: View {
                         }
                     }
                     Spacer()
-                    TaskbarView(selectedTab: $selectedTab, showPlusButton: $showPlusButton, streak: $streak)
+                    TaskbarView(selectedTab: $selectedTab, showPlusButton: $showPlusButton, streak: $streak, showStreak: $showStreak)
                 }
             }
         }
@@ -99,6 +125,7 @@ struct TaskbarView: View {
     @Binding var selectedTab: Tab
     @Binding var showPlusButton: Bool
     @Binding var streak: Int
+    @Binding var showStreak: Bool
 
     var body: some View {
         GeometryReader { geometry in
@@ -106,7 +133,7 @@ struct TaskbarView: View {
                 // Add Friends button at the top
                 HStack {
                     Spacer()
-                    if showPlusButton {
+                    if showPlusButton && showStreak {
                         Button(action: {
                             selectedTab = .addFriends
                         }) {

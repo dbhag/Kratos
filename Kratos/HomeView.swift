@@ -136,14 +136,15 @@ struct ContentView: View {
                                         Text(workout.username)
                                             .foregroundColor(.white)
                                             .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                            .padding(.trailing, 115)
-    
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            
                                         Text("\(timeAgoSinceDate(workout.recentWorkout))")
                                             .foregroundColor(.white)
                                             .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                            .frame(maxWidth: .infinity, alignment: .trailing)
                                     }
-                                    .padding(.vertical, 5)
-                                    .padding(.horizontal)
+                                    .padding(.vertical, geometry.size.height * 0.02)
+                                    .padding(.horizontal, geometry.size.width * 0.14)
                                 }
                             }
                         }
