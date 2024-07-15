@@ -61,14 +61,15 @@ struct MainContainerView: View {
                 VStack {
                     GeometryReader { geometry in
                         HStack {
-                            if streak > 0 {
+                            if streak > 0 && showPlusButton {
                                 StreakFlameView(streak: streak)
                                     .frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
-                                    .offset(x: geometry.size.width * 0.64, y: -geometry.size.height * 0.032)
+                                    .offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.045)
                             }
                             else
                             {
                                 Spacer().frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
+                                Spacer().offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.045)
                             }
                         }
                     }

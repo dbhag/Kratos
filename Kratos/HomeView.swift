@@ -23,7 +23,7 @@ struct ContentView: View {
                                 .minimumScaleFactor(0.8)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .offset(x: 0, y: -geometry.size.height * 0.07)
+                                .offset(x: 0, y: -geometry.size.height * 0.05)
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
