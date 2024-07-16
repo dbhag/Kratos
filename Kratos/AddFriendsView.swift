@@ -178,21 +178,55 @@ struct AddFriendsView: View {
             return
         }
 
-        db.collection("users")
-            .whereField("username", isGreaterThanOrEqualTo: searchQuery)
-            .whereField("username", isLessThanOrEqualTo: searchQuery + "\u{f8ff}")
-            .getDocuments { snapshot, error in
+        guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+
+        let userRef = db.collection("users").document(currentUserID)
+
+        userRef.getDocument { document, error in
+            if let error = error {
+                print("Error fetching user data: \(error.localizedDescription)")
+                return
+            }
+
+            guard let document = document else { return }
+
+            let friendsCollection = db.collection("friends").document(currentUserID).collection("friendsList")
+
+            friendsCollection.getDocuments { friendsSnapshot, error in
                 if let error = error {
-                    print("Error searching users: \(error.localizedDescription)")
+                    print("Error fetching friends list: \(error.localizedDescription)")
                     return
                 }
-                guard let documents = snapshot?.documents else { return }
-                self.searchResults = documents.map { doc in
-                    let data = doc.data()
-                    return User(id: doc.documentID, username: data["username"] as? String ?? "", email: data["email"] as? String ?? "")
-                }
-                self.showOverlay = !self.searchResults.isEmpty
+
+                let friends = friendsSnapshot?.documents.compactMap { $0.documentID } ?? []
+
+                self.db.collection("users")
+                    .whereField("username", isGreaterThanOrEqualTo: self.searchQuery)
+                    .whereField("username", isLessThanOrEqualTo: self.searchQuery + "\u{f8ff}")
+                    .getDocuments { snapshot, error in
+                        if let error = error {
+                            print("Error searching users: \(error.localizedDescription)")
+                            return
+                        }
+                        guard let documents = snapshot?.documents else { return }
+
+                        self.searchResults = documents.compactMap { doc in
+                            let data = doc.data()
+                            let userId = doc.documentID
+                            let username = data["username"] as? String ?? ""
+                            let email = data["email"] as? String ?? ""
+
+                            // Exclude the current user and their friends
+                            if userId != currentUserID && !friends.contains(userId) {
+                                return User(id: userId, username: username, email: email)
+                            }
+                            return nil
+                        }
+
+                        self.showOverlay = !self.searchResults.isEmpty
+                    }
             }
+        }
     }
 
     private func addFriend(user: User) {
