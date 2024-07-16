@@ -8,7 +8,6 @@ struct ContentView: View {
     @Binding var showPlusButton: Bool
 
     var body: some View {
-        NavigationView {
             GeometryReader { geometry in
                 ZStack {
                     Color(red: 0.16, green: 0.18, blue: 0.2)
@@ -23,11 +22,11 @@ struct ContentView: View {
                                 .minimumScaleFactor(0.8)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .offset(x: 0, y: -geometry.size.height * 0.05)
+                                .offset(x: 0, y: -geometry.size.height * 0.07)
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
-                        .padding(.top, -geometry.size.height * 0.14)
+                        .padding(.top, geometry.size.height * 0.05)
 
                         // 3D Model View
                         if let modelName = getModelName(for: firestoreService.userScore) {
@@ -55,12 +54,15 @@ struct ContentView: View {
                             .background(Color(red: 0.16, green: 0.18, blue: 0.2)) // Ensure background is clear
                             .cornerRadius(20)
                             .padding(.top, -14)
-                            .offset(y: -geometry.size.height * 0.025)
+                            .offset(y: -geometry.size.height * 0.035)
                         }
+                        //.padding(.top, -14)
 
                         // Progress Snippet View
                         ZStack {
-                            NavigationLink(destination: FullProgressMapView(firestoreService: firestoreService, showPlusButton: $showPlusButton)) {
+                            Button(action: {
+                             selectedTab = .progress
+                            }) {
                                 Rectangle()
                                     .foregroundColor(.clear)
                                     .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.1)
@@ -119,8 +121,8 @@ struct ContentView: View {
                                 }
                             }
                         }
-                        .padding(.vertical, geometry.size.height * 0.02)
-                        .offset(y: -geometry.size.height * 0.01)
+                        .padding(.vertical, geometry.size.height * 0.0)
+                        .offset(y: -geometry.size.height * 0.02)
                         
                         // Recent Workouts View
                         ZStack {
@@ -148,18 +150,18 @@ struct ContentView: View {
                                 }
                             }
                         }
-                        .padding(.vertical, geometry.size.height * 0.04)
+                        .padding(.vertical, geometry.size.height * 0.03)
                         .offset(y: -geometry.size.height * 0.045)
                     }
-                    .offset(y: geometry.size.height * -0.01)
+                    .offset(y: geometry.size.height * -0.02)
                     .onAppear {
                         firestoreService.fetchFriendsRecentWorkouts()
                         firestoreService.fetchUserScore() // Fetch user score on appear
                     }
                 }
             }
-        }
-        .navigationBarBackButtonHidden(true)
+        //}
+        //.navigationBarBackButtonHidden(true)
     }
 
     // Helper function to get model name based on score
