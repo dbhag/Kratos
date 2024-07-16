@@ -83,6 +83,7 @@ struct ContentView: View {
                                     .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.1)
                                     .cornerRadius(20)
                                     .padding(.leading, 50)
+                                    //.scaledToFit()
                                 }
                                 
                                 let nextAnimal = getNextAnimal(for: firestoreService.userScore)
@@ -122,7 +123,7 @@ struct ContentView: View {
                             }
                         }
                         .padding(.vertical, geometry.size.height * 0.0)
-                        .offset(y: -geometry.size.height * 0.02)
+                        .offset(y: -geometry.size.height * 0.03)
                         
                         // Recent Workouts View
                         ZStack {

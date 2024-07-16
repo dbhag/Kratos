@@ -35,6 +35,7 @@ struct AddFriendsView: View {
                 .blendMode(.overlay)
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .edgesIgnoringSafeArea(.all)
+            
 
                 VStack {
                     // Header with Text and Flame Image
@@ -87,13 +88,23 @@ struct AddFriendsView: View {
                                 acceptFriendRequest(from: user)
                             }) {
                                 Text("Accept")
-                                    .foregroundColor(.green)
+                                    .foregroundColor(.white)
+                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                                    .frame(width: geometry.size.width * 0.12, height:  geometry.size.height * 0.05)
+                                    .background(Color.green) // Background color for the rectangle
+                                    .cornerRadius(10)
+                                    .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
                             }
                             Button(action: {
                                 rejectFriendRequest(from: user)
                             }) {
                                 Text("Reject")
-                                    .foregroundColor(.red)
+                                    .foregroundColor(.white)
+                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                                    .frame(width: geometry.size.width * 0.12, height:  geometry.size.height * 0.05)
+                                    .background(Color.red) // Background color for the rectangle
+                                    .cornerRadius(10)
+                                    .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
                             }
                         }
                         .listRowBackground(Color.clear)
@@ -121,35 +132,42 @@ struct AddFriendsView: View {
 
     private var overlayView: some View {
         VStack {
-            Text("Search Results")
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding()
-            List(searchResults) { user in
-                HStack {
-                    Text(user.username)
-                        .foregroundColor(.white)
-                    Spacer()
-                    Button(action: {
-                        addFriend(user: user)
-                    }) {
-                        Text("Add")
-                            .foregroundColor(.blue)
+            GeometryReader { geometry in
+                Text("Search Results")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                List(searchResults) { user in
+                    HStack {
+                        Text(user.username)
+                            .foregroundColor(.white)
+                        Spacer()
+                        Button(action: {
+                            addFriend(user: user)
+                        }) {
+                            Text("Add")
+                                .foregroundColor(.white)
+                                .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                                .frame(width: geometry.size.width * 0.12, height:  geometry.size.height * 0.05)
+                                .background(Color.blue) // Background color for the rectangle
+                                .cornerRadius(5)
+                                .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .listRowBackground(Color.clear)
                 }
-                .listRowBackground(Color.clear)
+                .background(Color.clear)
+                .scrollContentBackground(.hidden)
             }
-            .background(Color.clear)
-            .scrollContentBackground(.hidden)
-        }
-        .padding()
-        .background(Color.black.opacity(0.8)) // Ensure background to avoid interaction issues
-        .cornerRadius(10)
-        .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure the overlay takes the full space
-        .onTapGesture {
-            // Dismiss overlay when tapped outside
-            self.showOverlay = false
+            .padding()
+            .background(Color.black.opacity(0.8)) // Ensure background to avoid interaction issues
+            .cornerRadius(10)
+            .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure the overlay takes the full space
+            .onTapGesture {
+                // Dismiss overlay when tapped outside
+                self.showOverlay = false
+            }
         }
     }
 
