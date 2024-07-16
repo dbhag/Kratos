@@ -127,7 +127,6 @@ struct ErrorMessage: Identifiable {
 
 struct LoginView: View {
     @EnvironmentObject private var authViewModel: AuthViewModel
-
     var body: some View {
         NavigationView {
             ZStack {
@@ -166,16 +165,19 @@ struct LoginView: View {
                     .alert(item: $authViewModel.errorMessage) { error in
                         Alert(title: Text("Sign In Failed"), message: Text(error.message), dismissButton: .default(Text("OK")))
                     }
-                    .background(
+                    /*.background(
                         NavigationLink(destination: MainContainerView(), isActive: .constant(authViewModel.state == .signedIn)) {
                             EmptyView()
                         }
-                    )
-                    .background(
-                      NavigationLink(destination: CreateUsernameView().environmentObject(authViewModel), isActive: .constant(authViewModel.state == .needsUsername)) {
-                          EmptyView()
-                        }
-                    )
+                    )*/
+                    .navigationDestination(isPresented: .constant(authViewModel.state == .signedIn))
+                    {
+                        MainContainerView()
+                    }
+                    .navigationDestination(isPresented: .constant(authViewModel.state == .needsUsername))
+                    {
+                        CreateUsernameView().environmentObject(authViewModel)
+                    }
                     
                     Spacer()
                 }
@@ -227,11 +229,11 @@ struct CreateUsernameView: View {
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
-            .background(
-                NavigationLink(destination: WorkoutGoalsView(), isActive: $navigateToGoals) {
-                    EmptyView()
-                }
-            )
+            .navigationDestination(isPresented: $navigateToGoals)
+            {
+                WorkoutGoalsView()
+            }
+            
         }
         .padding()
     }

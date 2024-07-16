@@ -19,7 +19,9 @@ struct MainContainerView: View {
     @State private var streak: Int = 0
     @State private var showPlusButton: Bool = true
     @State private var showStreak: Bool = true
+    @ObservedObject private var firestoreService = FirestoreService()
     private let db = Firestore.firestore()
+    
     
     var body: some View {
         ZStack {
