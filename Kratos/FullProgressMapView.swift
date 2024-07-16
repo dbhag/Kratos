@@ -23,10 +23,10 @@ struct FullProgressMapView: View {
                             ForEach((0..<7).reversed(), id: \.self) { index in
                                 VStack {
                                     if index != 6 {
-                                        if isInBetween(for: scoreForIndex(index)) {
+                                        if isInBetween(for: index) {
                                             HStack {
                                                 Text("\(firestoreService.userScore) points")
-                                                    .foregroundColor(.white)
+                                                    .foregroundColor(.yellow)
                                                     .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                                                     .offset(x: geometry.size.width * 0.14, y: geometry.size.height * 0.095)
                                             }
@@ -74,6 +74,7 @@ struct FullProgressMapView: View {
                         .padding()
                         .onAppear {
                           scrollToCurrentLevel(proxy: proxy)
+                          firestoreService.fetchUserScore()
                           showPlusButton = false
                         }
                         .onDisappear
@@ -113,8 +114,8 @@ struct FullProgressMapView: View {
     }*/
 
     func isInBetween(for score: Int) -> Bool {
-        let nextScore = score + 200
-        return firestoreService.userScore > score && firestoreService.userScore < nextScore
+        let nextScore = scoreForIndex(score + 1)
+        return firestoreService.userScore > scoreForIndex(score) && firestoreService.userScore < nextScore
     }
     func scoreForIndex(_ index: Int) -> Int {
             switch index {

@@ -76,7 +76,8 @@ struct WorkoutRowView: View {
         }
         .padding()
         .background(Color(red: 0.16, green: 0.18, blue: 0.2).opacity(0.8))
-        .cornerRadius(10)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
     }
 }
 
