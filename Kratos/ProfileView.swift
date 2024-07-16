@@ -61,7 +61,7 @@ struct ProfileView: View {
                     
                     Spacer()
                     
-                    ZStack {
+                    ZStack(alignment: .top) {
                         Rectangle()
                             .foregroundColor(.clear)
                             .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.45)
@@ -69,7 +69,7 @@ struct ProfileView: View {
                             .cornerRadius(24)
                             .shadow(color: Color.white.opacity(0.5), radius: 50, x: 5, y: 5)
                         
-                        VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: geometry.size.height * 0.05) {
                             HStack {
                                 Text("Longest Streak:")
                                     .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
@@ -89,9 +89,10 @@ struct ProfileView: View {
                                     .foregroundColor(.white)
                             }
                         }
+                        .padding(.top, geometry.size.height * 0.03)
                         .padding(.horizontal, geometry.size.width * 0.1)
-                        .padding(.top, 20)
                     }
+                    .padding(.vertical, -geometry.size.height * 0.2)
                     .offset(y: -geometry.size.height * 0.05)
                     
                     Spacer()

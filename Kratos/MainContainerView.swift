@@ -47,14 +47,14 @@ struct MainContainerView: View {
                     }
                 }
                 .navigationBarHidden(true)
-                .onChange(of: selectedTab) { newTab in
-                    print("MainContainerView: selectedTab changed to \(newTab)")
-                    if newTab == .progress {
+                .onChange(of: selectedTab) {
+                    print("MainContainerView: selectedTab changed to \(selectedTab)")
+                    if selectedTab == .progress {
                         showPlusButton = false
                     } else {
                         showPlusButton = true
                     }
-                    if newTab == .profile || newTab == .workoutGoals
+                    if selectedTab == .profile || selectedTab == .workoutGoals
                     {
                         showStreak = false
                     }
