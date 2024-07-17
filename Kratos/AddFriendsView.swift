@@ -83,6 +83,7 @@ struct AddFriendsView: View {
                         HStack {
                             Text(user.username)
                                 .foregroundColor(.white)
+                                .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
                             Spacer()
                             Button(action: {
                                 acceptFriendRequest(from: user)
@@ -90,7 +91,7 @@ struct AddFriendsView: View {
                                 Text("Accept")
                                     .foregroundColor(.white)
                                     .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
-                                    .frame(width: geometry.size.width * 0.12, height:  geometry.size.height * 0.05)
+                                    .frame(width: geometry.size.width * 0.24, height:  geometry.size.height * 0.05)
                                     .background(Color.green) // Background color for the rectangle
                                     .cornerRadius(10)
                                     .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
@@ -101,7 +102,7 @@ struct AddFriendsView: View {
                                 Text("Reject")
                                     .foregroundColor(.white)
                                     .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
-                                    .frame(width: geometry.size.width * 0.12, height:  geometry.size.height * 0.05)
+                                    .frame(width: geometry.size.width * 0.24, height:  geometry.size.height * 0.05)
                                     .background(Color.red) // Background color for the rectangle
                                     .cornerRadius(10)
                                     .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
