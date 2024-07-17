@@ -35,8 +35,8 @@ struct AddFriendsView: View {
                 .blendMode(.overlay)
                 .frame(width: geometry.size.width, height: geometry.size.height)
                 .edgesIgnoringSafeArea(.all)
-            
-
+        
+                
                 VStack {
                     // Header with Text and Flame Image
                     HStack(spacing: geometry.size.width * 0.05) {
@@ -142,6 +142,7 @@ struct AddFriendsView: View {
                     HStack {
                         Text(user.username)
                             .foregroundColor(.white)
+                            .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
                         Spacer()
                         Button(action: {
                             addFriend(user: user)
