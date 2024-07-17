@@ -45,10 +45,11 @@ struct WorkoutGoalsView: View {
 
                     Spacer()
                 }
-                .navigationDestination(isPresented: $navigateToMainContainer)
-                {
-                    MainContainerView()
-                }
+                .background(
+                    NavigationLink(destination: MainContainerView(), isActive: $navigateToMainContainer) {
+                        EmptyView()
+                    }
+                )
             }
         }
         .navigationBarBackButtonHidden(true)

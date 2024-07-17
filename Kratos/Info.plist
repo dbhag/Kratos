@@ -5,16 +5,18 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string></string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.480589271298-qk1ibenv5r40fjkobuavj77fscp3ga80</string>
+				<string>com.googleusercontent.apps.831997367487-srlbsg7o4be2m99mk56lt4i3l5assr11</string>
 			</array>
 		</dict>
 	</array>
 	<key>GIDClientID</key>
-	<string>480589271298-qk1ibenv5r40fjkobuavj77fscp3ga80.apps.googleusercontent.com</string>
+	<string>831997367487-srlbsg7o4be2m99mk56lt4i3l5assr11.apps.googleusercontent.com</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>LilitaOne-Regular.ttf</string>

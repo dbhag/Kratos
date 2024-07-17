@@ -51,8 +51,16 @@ class AuthViewModel: ObservableObject {
     }
 
     func authenticateGoogleUser(for user: GIDGoogleUser?) async {
-        guard let idToken = user?.idToken?.tokenString else { return }
-        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: user?.accessToken.tokenString ?? "")
+        guard let idToken = user?.idToken?.tokenString else {
+            self.errorMessage = ErrorMessage(message: "Failed to get ID token from Google user.")
+            return
+        }
+        guard let accessToken = user?.accessToken.tokenString else {
+            self.errorMessage = ErrorMessage(message: "Failed to get access token from Google user.")
+            return
+        }
+
+        let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
 
         do {
             let authResult = try await Auth.auth().signIn(with: credential)
@@ -60,12 +68,12 @@ class AuthViewModel: ObservableObject {
             UserDefaults.standard.set(true, forKey: "isLoggedIn")
             self.signInMethod = "Google"
             checkIfUserExists(authResult.user)
-        }
-        catch {
-            print(error.localizedDescription)
+        } catch {
+            print("Firebase sign-in error: \(error.localizedDescription)")
             self.errorMessage = ErrorMessage(message: error.localizedDescription)
         }
     }
+    
     private func checkIfUserExists(_ user: FirebaseAuth.User) {
             let userRef = db.collection("users").document(user.uid)
             userRef.getDocument { document, error in
@@ -77,45 +85,48 @@ class AuthViewModel: ObservableObject {
             }
         }
     func checkAndSaveUsername(_ username: String, completion: @escaping (Bool, String) -> Void) {
-            guard let user = currentUser else { return }
+        guard let user = currentUser else {
+            completion(false, "User not found.")
+            return
+        }
 
-            let usersRef = db.collection("users")
+        let usersRef = db.collection("users")
 
-            // Check if the username already exists
-            usersRef.whereField("username", isEqualTo: username).getDocuments { (querySnapshot, error) in
+        // Check if the username already exists
+        usersRef.whereField("username", isEqualTo: username).getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error checking username: \(error.localizedDescription)")
+                completion(false, "Error checking username. Please try again.")
+                return
+            }
+
+            // Check if documents exist in the query snapshot
+            if let documents = querySnapshot?.documents, !documents.isEmpty {
+                // Username already exists
+                print("Username already exists. Please choose a different one.")
+                completion(false, "Username already exists. Please choose a different one.")
+                return
+            }
+
+            // Username does not exist, proceed with saving the new username
+            let userRef = usersRef.document(user.uid)
+
+            userRef.setData([
+                "uid": user.uid,
+                "email": user.email ?? "",
+                "username": username,
+                "score": 0,
+                "recentWorkout": []
+            ]) { error in
                 if let error = error {
-                    print("Error checking username: \(error.localizedDescription)")
-                    completion(false, "Error checking username. Please try again.")
-                    return
-                }
-
-                if let documents = querySnapshot?.documents, !documents.isEmpty {
-                    // Username already exists
-                    print("Username already exists. Please choose a different one.")
-                    completion(false, "Username already exists. Please choose a different one.")
-                    return
-                }
-
-                // Username does not exist, proceed with saving the new username
-                let userRef = usersRef.document(user.uid)
-                
-                userRef.setData([
-                    "uid": user.uid,
-                    "email": user.email ?? "",
-                    "username": username,
-                    "score": 0,
-                    "recentWorkout": []
-                ]) { error in
-                    if let error = error {
-                        print("Error storing user data: \(error.localizedDescription)")
-                        completion(false, "Error storing user data. Please try again.")
-                    } else {
-                        //self.state = .signedIn
-                        completion(true, "")
-                    }
+                    print("Error storing user data: \(error.localizedDescription)")
+                    completion(false, "Error storing user data. Please try again.")
+                } else {
+                    completion(true, "User data stored successfully.")
                 }
             }
         }
+    }
 
 }
 
@@ -165,19 +176,17 @@ struct LoginView: View {
                     .alert(item: $authViewModel.errorMessage) { error in
                         Alert(title: Text("Sign In Failed"), message: Text(error.message), dismissButton: .default(Text("OK")))
                     }
-                    /*.background(
+                    .background(
                         NavigationLink(destination: MainContainerView(), isActive: .constant(authViewModel.state == .signedIn)) {
                             EmptyView()
                         }
-                    )*/
-                    .navigationDestination(isPresented: .constant(authViewModel.state == .signedIn))
-                    {
-                        MainContainerView()
-                    }
-                    .navigationDestination(isPresented: .constant(authViewModel.state == .needsUsername))
-                    {
-                        CreateUsernameView().environmentObject(authViewModel)
-                    }
+                    )
+                    
+                    .background(
+                        NavigationLink(destination: CreateUsernameView().environmentObject(authViewModel), isActive: .constant(authViewModel.state == .needsUsername)) {
+                            EmptyView()
+                        }
+                    )
                     
                     Spacer()
                 }
@@ -229,10 +238,11 @@ struct CreateUsernameView: View {
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
-            .navigationDestination(isPresented: $navigateToGoals)
-            {
-                WorkoutGoalsView()
-            }
+            .background(
+                NavigationLink(destination: WorkoutGoalsView(), isActive: $navigateToGoals) {
+                    EmptyView()
+                }
+            )
             
         }
         .padding()
