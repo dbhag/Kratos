@@ -9,6 +9,9 @@ struct NewWorkoutView: View {
     @State private var selectedLiftOptions: Set<String> = []
     @State private var selectedCardioOptions: Set<String> = []
     @EnvironmentObject var workoutModel: WorkoutModel
+    
+    @Binding var selectedTab: Tab
+    
     private let db = Firestore.firestore()
 
     var body: some View {
@@ -107,6 +110,7 @@ struct NewWorkoutView: View {
                     Button(action: {
                         logWorkoutTimestamp()
                         clearSelections()
+                        selectedTab = .takePhoto
                     }) {
                         Text("Submit")
                             .font(.headline)
@@ -260,6 +264,6 @@ struct NewWorkoutView: View {
 }
 
 #Preview {
-    NewWorkoutView()
+    NewWorkoutView(selectedTab: .constant(.newWorkout))
 }
 

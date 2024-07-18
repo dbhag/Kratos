@@ -12,6 +12,7 @@ enum Tab {
     case newWorkout
     case progress
     case workoutGoals
+    case takePhoto
 }
 
 struct MainContainerView: View {
@@ -41,11 +42,13 @@ struct MainContainerView: View {
                     case .addFriends:
                         AddFriendsView()
                     case .newWorkout:
-                        NewWorkoutView()
+                        NewWorkoutView(selectedTab: $selectedTab)
                     case .progress:
                         FullProgressMapView(firestoreService: FirestoreService(), showPlusButton: $showPlusButton)
                     case .workoutGoals:
                         SettingsWorkoutView()
+                    case .takePhoto:
+                        TakePhotoView(selectedTab: $selectedTab)
                     }
                 }
                 .navigationBarHidden(true)
