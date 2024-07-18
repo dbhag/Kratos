@@ -13,6 +13,7 @@ enum Tab {
     case progress
     case workoutGoals
     case takePhoto
+    case feed
 }
 
 struct MainContainerView: View {
@@ -49,6 +50,8 @@ struct MainContainerView: View {
                         SettingsWorkoutView()
                     case .takePhoto:
                         TakePhotoView(selectedTab: $selectedTab)
+                    case .feed:
+                        FeedView()
                     }
                 }
                 .navigationBarHidden(true)
@@ -59,7 +62,7 @@ struct MainContainerView: View {
                     } else {
                         showPlusButton = true
                     }
-                    if selectedTab == .profile || selectedTab == .workoutGoals
+                    if selectedTab == .profile || selectedTab == .workoutGoals || selectedTab == .feed || selectedTab == .takePhoto
                     {
                         showStreak = false
                     }
@@ -97,6 +100,21 @@ struct MainContainerView: View {
                                 }
                                 .offset(x: geometry.size.width * 0.815, y: geometry.size.height * 0.064)
                             }
+                            else if selectedTab == .feed && !showStreak
+                            {
+                                Button(action: {
+                                    selectedTab = .profile
+                                })
+                                {
+                                    Image(systemName: "person.crop.circle")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(.white)
+                                        .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.09)
+                                }
+                                .offset(x: geometry.size.width * 0.815, y: geometry.size.height * 0.064)
+                            }
+                            
                             else
                             {
                                 Spacer().frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
@@ -209,12 +227,14 @@ struct TaskbarView: View {
                     }
                     .offset(x: geometry.size.width * 0.058)
                     Button(action: {
-                        selectedTab = .profile
+                        selectedTab = .feed
                     }) {
-                        Image(.iconamoonProfile)
+                        Image(systemName: "camera")
                             .resizable()
+                            .foregroundColor(.white)
+                            .opacity(/*@START_MENU_TOKEN@*/0.8/*@END_MENU_TOKEN@*/)
                             .scaledToFit()
-                            .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
+                            .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
                     }
                     .offset(y: geometry.size.height * 0.004)
                 }

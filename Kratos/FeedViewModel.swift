@@ -55,7 +55,7 @@ class FeedViewModel: ObservableObject {
             guard let currentUserID = Auth.auth().currentUser?.uid else { return }
 
             // Fetch friends list
-            let friendsRef = db.collection("users").document(currentUserID).collection("friendsList")
+            let friendsRef = db.collection("friends").document(currentUserID).collection("friendsList")
             friendsRef.getDocuments { [weak self] snapshot, error in
                 if let error = error {
                     print("Error fetching friends: \(error.localizedDescription)")

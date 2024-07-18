@@ -12,16 +12,6 @@ struct FeedView: View {
                     Color(red: 0.16, green: 0.18, blue: 0.2)
                         .edgesIgnoringSafeArea(.all)
                     VStack {
-                        // Header
-                        HStack {
-                            Text("Feed")
-                                .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
-                                .foregroundColor(.white)
-                                .padding(.leading, 20)
-                            Spacer()
-                        }
-                        .padding(.top, 20)
-                        
                         // Feed Content
                         ScrollView {
                             VStack(spacing: 15) {
