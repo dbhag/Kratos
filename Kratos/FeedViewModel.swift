@@ -17,6 +17,7 @@ class FeedViewModel: ObservableObject {
     @Published var posts = [Post]()
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
+    @Published var userPosts: [Post] = []
     
     func uploadPost(image: UIImage, caption: String) {
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
@@ -105,6 +106,26 @@ class FeedViewModel: ObservableObject {
                 }
             }
         }
+    func fetchUserPosts() 
+    {
+            guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+
+            // Fetch posts by the current user
+            db.collection("posts")
+                .whereField("userId", isEqualTo: currentUserID)
+                .order(by: "timestamp", descending: true)
+                .getDocuments { [weak self] snapshot, error in
+                    if let error = error {
+                        print("Error fetching user posts: \(error.localizedDescription)")
+                        return
+                    }
+                    guard let documents = snapshot?.documents else { return }
+
+                    self?.userPosts = documents.compactMap { document in
+                        try? document.data(as: Post.self)
+                    }
+                }
+    }
 }
 
 struct Post: Identifiable, Codable {

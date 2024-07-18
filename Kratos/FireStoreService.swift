@@ -10,7 +10,7 @@ class FirestoreService: ObservableObject {
     @Published var longestStreak: Int = 0
     @Published var totalWorkouts: Int = 0
     @Published var userScore: Int = 0
-
+        
     private let db = Firestore.firestore()
     private var listener: ListenerRegistration?
 
@@ -196,6 +196,7 @@ class FirestoreService: ObservableObject {
             }
         }
     }
+    
 }
 
 struct LeaderboardEntry: Identifiable {

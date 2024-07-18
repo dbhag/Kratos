@@ -1,14 +1,9 @@
-//
-//  ContentView.swift
-//  Kratos
-//
-//  Created by Dhruv Bhagavatula on 6/11/24.
-//
 import SwiftUI
 import SceneKit
 
 struct ProfileView: View {
     @ObservedObject var firestoreService = FirestoreService()
+    @ObservedObject var feedViewModel = FeedViewModel()
 
     var body: some View {
         GeometryReader { geometry in
@@ -31,69 +26,110 @@ struct ProfileView: View {
                     .frame(height: geometry.size.height * 0.1)
                     .padding(.top, geometry.size.height * 0.05)
 
-                    // 3D Model View
-                    if let modelName = getModelName(for: firestoreService.userScore) {
-                        SceneView(
-                            scene: {
-                                let scene = SCNScene(named: modelName)!
-                                
-                                // Set the scene background color to match the app's theme
-                                scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1.0)
-                                
-                                // Add custom lighting
-                                let ambientLight = SCNLight()
-                                ambientLight.type = .ambient
-                                ambientLight.color = UIColor(white: 0.8, alpha: 1.0)
-                                
-                                let ambientLightNode = SCNNode()
-                                ambientLightNode.light = ambientLight
-                                scene.rootNode.addChildNode(ambientLightNode)
-                                
-                                return scene
-                            }(),
-                            options: [.autoenablesDefaultLighting, .allowsCameraControl]
-                        )
-                        .frame(width: geometry.size.width * 0.4, height: geometry.size.height * 0.2)
-                        .background(Color.clear) // Ensure background is clear
-                        .cornerRadius(20)
-                        .padding(.top, -20)
-                    }
-                    
-                    Spacer()
-                    
-                    ZStack(alignment: .top) {
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.45)
-                            .background(Color.white.opacity(0.09))
-                            .cornerRadius(24)
-                            .shadow(color: Color.white.opacity(0.5), radius: 50, x: 5, y: 5)
+                    // 3D Model and Stats View
+                    HStack {
+                        if let modelName = getModelName(for: firestoreService.userScore) {
+                            SceneView(
+                                scene: {
+                                    let scene = SCNScene(named: modelName)!
+                                    
+                                    // Set the scene background color to match the app's theme
+                                    scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1.0)
+                                    
+                                    // Add custom lighting
+                                    let ambientLight = SCNLight()
+                                    ambientLight.type = .ambient
+                                    ambientLight.color = UIColor(white: 0.8, alpha: 1.0)
+                                    
+                                    let ambientLightNode = SCNNode()
+                                    ambientLightNode.light = ambientLight
+                                    scene.rootNode.addChildNode(ambientLightNode)
+                                    
+                                    return scene
+                                }(),
+                                options: [.autoenablesDefaultLighting, .allowsCameraControl]
+                            )
+                            .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.2)
+                            .background(Color.clear) // Ensure background is clear
+                            .cornerRadius(20)
+                            .padding(.top, -20)
+                            .offset(x: -geometry.size.width * 0.03, y: geometry.size.height * 0.015)
+                        }
                         
-                        VStack(alignment: .leading, spacing: geometry.size.height * 0.05) {
-                            HStack {
-                                Text("Longest Streak:")
-                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                    .foregroundColor(.white)
-                                Spacer()
-                                Text("\(firestoreService.longestStreak) weeks")
-                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                    .foregroundColor(.white)
+                        VStack(spacing: 20) {
+                            // Longest Streak Box
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .foregroundColor(Color.white.opacity(0.09))
+                                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.08)
+                                
+                                HStack {
+                                    Text("Longest Streak:")
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .foregroundColor(.white)
+                                    Text("\(firestoreService.longestStreak) weeks")
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .foregroundColor(.white)
+                                }
+                                .padding(.horizontal)
                             }
-                            HStack {
-                                Text("Total Workouts:")
-                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                    .foregroundColor(.white)
-                                Spacer()
-                                Text("\(firestoreService.totalWorkouts)")
-                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                    .foregroundColor(.white)
+                            
+                            // Total Workouts Box
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .foregroundColor(Color.white.opacity(0.09))
+                                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.08)
+                                
+                                HStack {
+                                    Text("Total Workouts:")
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .foregroundColor(.white)
+                                    Text("\(firestoreService.totalWorkouts)")
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .foregroundColor(.white)
+                                }
+                                .padding(.horizontal)
                             }
                         }
-                        .padding(.top, geometry.size.height * 0.03)
-                        .padding(.horizontal, geometry.size.width * 0.1)
                     }
-                    .padding(.vertical, -geometry.size.height * 0.2)
-                    .offset(y: -geometry.size.height * 0.05)
+
+                    // User Posts
+                    ScrollView {
+                        VStack(spacing: 15) {
+                            ForEach(feedViewModel.userPosts) { post in
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Text(post.caption)
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                        .foregroundColor(.white)
+                                    Text(post.timestamp.dateValue(), style: .date)
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .foregroundColor(.gray)
+                                    AsyncImage(url: URL(string: post.photoURL)) { phase in
+                                        if let image = phase.image {
+                                            image
+                                                .resizable()
+                                                //.scaledToFill()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.3)
+                                                //.clipped()
+                                        } else if phase.error != nil {
+                                            Text("Error loading image")
+                                                .foregroundColor(.red)
+                                        } else {
+                                            ProgressView()
+                                        }
+                                    }
+                                    .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.3)
+                                    .background(Color.gray)
+                                    .cornerRadius(10)
+                                }
+                                .padding()
+                                .background(Color(red: 0.16, green: 0.18, blue: 0.2).opacity(0.8))
+                                .cornerRadius(10)
+                            }
+                        }
+                    }
+                    .padding(.top, 20)
                     
                     Spacer()
                 }
@@ -102,6 +138,7 @@ struct ProfileView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear {
             firestoreService.fetchUserStats()
+            feedViewModel.fetchUserPosts()
         }
     }
     
