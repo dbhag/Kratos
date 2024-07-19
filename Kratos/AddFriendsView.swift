@@ -15,6 +15,11 @@ struct User: Identifiable {
             self.recentWorkout = recentWorkout
     }
 }
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
 
 struct AddFriendsView: View {
     @State private var searchQuery: String = ""
@@ -29,13 +34,16 @@ struct AddFriendsView: View {
             ZStack {
                 Color(red: 0.16, green: 0.18, blue: 0.2)
                     .edgesIgnoringSafeArea(.all)
-                RadialGradient(gradient: Gradient(colors: [
+                /*RadialGradient(gradient: Gradient(colors: [
                     Color.white.opacity(0.5),
                     Color.white.opacity(0.0)
                 ]), center: .center, startRadius: 50, endRadius: 300)
                 .blendMode(.overlay)
                 .frame(width: geometry.size.width, height: geometry.size.height)
-                .edgesIgnoringSafeArea(.all)
+                .edgesIgnoringSafeArea(.all)*/
+                .onTapGesture {
+                   self.hideKeyboard()
+                }
         
                 
                 VStack {
@@ -122,12 +130,13 @@ struct AddFriendsView: View {
                 }
 
                 if showOverlay {
-                    overlayView
-                        .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.5)
-                        .background(Color.gray.opacity(0.8))
-                        .cornerRadius(10)
-                        .padding(.horizontal, geometry.size.width * 0.05)
-                        .offset(y: geometry.size.height * 0)
+                    VStack {
+                        overlayView
+                            .frame(width: geometry.size.width * 0.9, height: geometry.size.height * 0.8)
+                            .background(Color(red: 0.16, green: 0.18, blue: 0.2))
+                            .padding(.horizontal, geometry.size.width * 0.05)
+                            .offset(y: geometry.size.height * 0.11)
+                    }
                 }
             }
         }
@@ -139,10 +148,6 @@ struct AddFriendsView: View {
     private var overlayView: some View {
         VStack {
             GeometryReader { geometry in
-                Text("Search Results")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .padding()
                 List(searchResults) { user in
                     HStack {
                         Text(user.username)
@@ -168,7 +173,9 @@ struct AddFriendsView: View {
                 .scrollContentBackground(.hidden)
             }
             .padding()
-            .background(Color.black.opacity(0.8)) // Ensure background to avoid interaction issues
+            .background(Color(red: 0.16, green: 0.18, blue: 0.2))
+            //.background(Color.black)
+            // Ensure background to avoid interaction issues
             .cornerRadius(10)
             .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure the overlay takes the full space
             .onTapGesture {
@@ -176,6 +183,7 @@ struct AddFriendsView: View {
                 self.showOverlay = false
             }
         }
+        //.offset(y: -geometry.size.height * 0.05)
     }
 
     private func searchUser() {
