@@ -24,6 +24,21 @@ class AuthViewModel: ObservableObject {
     private let db = Firestore.firestore()
     private var currentUser: FirebaseAuth.User?
     
+    
+    init()
+    {
+        checkLastLogin()
+    }
+    
+    func checkLastLogin() {
+        if let lastLoginDate = UserDefaults.standard.object(forKey: "lastLoginDate") as? Date {
+            let oneWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date())!
+            if lastLoginDate > oneWeekAgo {
+                self.state = .signedIn
+            }
+        }
+    }
+    
     func signInWithGoogle() async {
         if GIDSignIn.sharedInstance.hasPreviousSignIn() {
             do {
@@ -66,6 +81,7 @@ class AuthViewModel: ObservableObject {
             let authResult = try await Auth.auth().signIn(with: credential)
             self.currentUser = authResult.user
             UserDefaults.standard.set(true, forKey: "isLoggedIn")
+            UserDefaults.standard.set(Date(), forKey: "lastLoginDate")
             self.signInMethod = "Google"
             checkIfUserExists(authResult.user)
         } catch {
