@@ -88,7 +88,7 @@ struct AddFriendsView: View {
                     .padding(.top, -geometry.size.height * 0.05)
                     // Incoming Friend Requests
                     Text("Incoming Friend Requests")
-                        .font(.headline)
+                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                         .foregroundColor(.white)
                         .padding(.top)
 
