@@ -21,6 +21,7 @@ struct AddFriendsView: View {
     @State private var searchResults: [User] = []
     @State private var incomingRequests: [User] = []
     @State private var showOverlay: Bool = false
+    @Binding var isTyping: Bool
     private let db = Firestore.firestore()
 
     var body: some View {
@@ -54,7 +55,11 @@ struct AddFriendsView: View {
 
                     // Search by Username Section
                     HStack {
-                        TextField("Search by username", text: $searchQuery)
+                        TextField("Search by username", text: $searchQuery, onEditingChanged: { editing in
+                            withAnimation {
+                                isTyping = editing
+                            }
+                        })
                             .padding()
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(10)
@@ -375,6 +380,6 @@ struct AddFriendsView: View {
 }
 
 #Preview {
-    AddFriendsView()
+    AddFriendsView(isTyping: .constant(true))
 }
 

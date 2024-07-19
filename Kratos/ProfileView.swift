@@ -108,10 +108,11 @@ struct ProfileView: View {
                                         if let image = phase.image {
                                             image
                                                 .resizable()
-                                                //.scaledToFill()
-                                                .aspectRatio(contentMode: .fit)
+                                                //.scaledToFit()
                                                 .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.3)
+                                                .aspectRatio(contentMode: .fit)
                                                 //.clipped()
+                                                //.contentShape(Rectangle())
                                         } else if phase.error != nil {
                                             Text("Error loading image")
                                                 .foregroundColor(.red)

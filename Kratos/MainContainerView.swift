@@ -21,6 +21,7 @@ struct MainContainerView: View {
     @State private var streak: Int = 0
     @State private var showPlusButton: Bool = true
     @State private var showStreak: Bool = true
+    @State private var isTyping: Bool = false
     @ObservedObject private var firestoreService = FirestoreService()
     private let db = Firestore.firestore()
     
@@ -41,7 +42,7 @@ struct MainContainerView: View {
                     case .login:
                         LoginView()
                     case .addFriends:
-                        AddFriendsView()
+                        AddFriendsView(isTyping: $isTyping)
                     case .newWorkout:
                         NewWorkoutView(selectedTab: $selectedTab)
                     case .progress:
@@ -123,7 +124,7 @@ struct MainContainerView: View {
                         }
                     }
                     Spacer()
-                    TaskbarView(selectedTab: $selectedTab, showPlusButton: $showPlusButton, streak: $streak, showStreak: $showStreak)
+                    TaskbarView(selectedTab: $selectedTab, showPlusButton: $showPlusButton, streak: $streak, showStreak: $showStreak, isTyping: $isTyping)
                 }
             }
         }
@@ -149,7 +150,7 @@ struct TaskbarView: View {
     @Binding var showPlusButton: Bool
     @Binding var streak: Int
     @Binding var showStreak: Bool
-
+    @Binding var isTyping: Bool
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -172,76 +173,78 @@ struct TaskbarView: View {
                     }
                 }
                 .padding(.trailing, geometry.size.width * 0.05)
-
+                
                 Spacer()
-
-                ZStack {
-                    Image(.rectangle41)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: geometry.size.width)
+                
+                if selectedTab != .takePhoto && !isTyping {
+                    ZStack {
+                        Image(.rectangle41)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: geometry.size.width)
                         //.padding(.vertical, -geometry.size.height * 0.09)
-                        .offset(y: geometry.size.height * 0.07)
-
-                    if showPlusButton && selectedTab != .newWorkout {
+                            .offset(y: geometry.size.height * 0.07)
+                        
+                        if showPlusButton && selectedTab != .newWorkout {
+                            Button(action: {
+                                selectedTab = .newWorkout
+                            }) {
+                                Image(.plusplus)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.2)
+                                    .background(Color.clear)
+                                    .contentShape(Rectangle())
+                            }
+                            .offset(y: -geometry.size.height * 0.08)
+                        }
+                    }
+                    .offset(y: geometry.size.height * 0.23)
+                    
+                    HStack(spacing: geometry.size.width * 0.15) {
                         Button(action: {
-                            selectedTab = .newWorkout
+                            selectedTab = .home
                         }) {
-                            Image(.plusplus)
+                            Image(.frame1)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.2)
-                                .background(Color.clear)
-                                .contentShape(Rectangle())
+                                .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
                         }
-                        .offset(y: -geometry.size.height * 0.08)
+                        Button(action: {
+                            selectedTab = .previousWorkouts
+                        }) {
+                            Image(.vector)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
+                        }
+                        .offset(x: -geometry.size.width * 0.07)
+                        Button(action: {
+                            selectedTab = .leaderboard
+                        }) {
+                            Image(.vector1)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
+                        }
+                        .offset(x: geometry.size.width * 0.058)
+                        Button(action: {
+                            selectedTab = .feed
+                        }) {
+                            Image(systemName: "camera")
+                                .resizable()
+                                .foregroundColor(.white)
+                                .opacity(/*@START_MENU_TOKEN@*/0.8/*@END_MENU_TOKEN@*/)
+                                .scaledToFit()
+                                .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
+                        }
+                        .offset(y: geometry.size.height * 0.004)
                     }
+                    .padding(.bottom, geometry.size.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.07))
+                    .frame(width: geometry.size.width * 0.9)
+                    .offset(x: 0, y: geometry.size.height * 0.095)
+                    .opacity(0.75)
                 }
-                .offset(y: geometry.size.height * 0.23)
-
-                HStack(spacing: geometry.size.width * 0.15) {
-                    Button(action: {
-                        selectedTab = .home
-                    }) {
-                        Image(.frame1)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
-                    }
-                    Button(action: {
-                        selectedTab = .previousWorkouts
-                    }) {
-                        Image(.vector)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
-                    }
-                    .offset(x: -geometry.size.width * 0.07)
-                    Button(action: {
-                        selectedTab = .leaderboard
-                    }) {
-                        Image(.vector1)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
-                    }
-                    .offset(x: geometry.size.width * 0.058)
-                    Button(action: {
-                        selectedTab = .feed
-                    }) {
-                        Image(systemName: "camera")
-                            .resizable()
-                            .foregroundColor(.white)
-                            .opacity(/*@START_MENU_TOKEN@*/0.8/*@END_MENU_TOKEN@*/)
-                            .scaledToFit()
-                            .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
-                    }
-                    .offset(y: geometry.size.height * 0.004)
-                }
-                .padding(.bottom, geometry.size.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.07))
-                .frame(width: geometry.size.width * 0.9)
-                .offset(x: 0, y: geometry.size.height * 0.095)
-                .opacity(0.75)
             }
         }
     }
