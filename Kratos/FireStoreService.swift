@@ -68,12 +68,13 @@ class FirestoreService: ObservableObject {
                     return
                 }
 
-                let friendsEntries = snapshot?.documents.compactMap { document -> LeaderboardEntry? in
+                var friendsEntries = snapshot?.documents.compactMap { document -> LeaderboardEntry? in
                     let data = document.data()
                     guard let name = data["username"] as? String,
                           let score = data["score"] as? Int else { return nil }
                     return LeaderboardEntry(id: document.documentID, name: name, score: score)
                 } ?? []
+                friendsEntries.append(currentUserEntry)
                 self.leaderboardEntries = friendsEntries.sorted(by: { $0.score > $1.score })
             }
     }

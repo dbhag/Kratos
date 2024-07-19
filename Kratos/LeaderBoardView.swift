@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct LeaderBoardView: View {
     @ObservedObject var firestoreService = FirestoreService()
+    private let currentUserID = Auth.auth().currentUser?.uid
+
     var body: some View {
             GeometryReader { geometry in
                 ZStack {
@@ -45,11 +48,11 @@ struct LeaderBoardView: View {
                                 HStack {
                                     Text(entry.name)
                                         .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(entry.id == currentUserID ? .red : .white)
                                     Spacer()
                                     Text("\(entry.score)")
                                         .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                        .foregroundColor(.white)
+                                        .foregroundColor(entry.id == currentUserID ? .red : .white)
                                 }
                                 .padding()
                                 .background(
