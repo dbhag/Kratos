@@ -48,11 +48,11 @@ struct LeaderBoardView: View {
                                 HStack {
                                     Text(entry.name)
                                         .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                        .foregroundColor(entry.id == currentUserID ? .red : .white)
+                                        .foregroundColor(.white)
                                     Spacer()
                                     Text("\(entry.score)")
                                         .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                        .foregroundColor(entry.id == currentUserID ? .red : .white)
+                                        .foregroundColor(.white)
                                 }
                                 .padding()
                                 .background(
@@ -62,7 +62,7 @@ struct LeaderBoardView: View {
                                     Color(red: 0.16, green: 0.18, blue: 0.2) // Default background color
                                 )
                                 .cornerRadius(10)
-                                .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
+                                .shadow(color: entry.id == currentUserID ? Color.blue.opacity(0.5) : Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
                             }
                             .listRowBackground(Color(red: 0.16, green: 0.18, blue: 0.2))
                         }
