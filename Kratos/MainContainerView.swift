@@ -14,6 +14,7 @@ enum Tab {
     case workoutGoals
     case takePhoto
     case feed
+    case friendsWorkout
 }
 
 struct MainContainerView: View {
@@ -22,6 +23,7 @@ struct MainContainerView: View {
     @State private var showPlusButton: Bool = true
     @State private var showStreak: Bool = true
     @State private var isTyping: Bool = false
+    @State private var friendID: String = ""
     @ObservedObject private var firestoreService = FirestoreService()
     private let db = Firestore.firestore()
     
@@ -36,7 +38,7 @@ struct MainContainerView: View {
                     case .previousWorkouts:
                         PreviousWorkoutsView()
                     case .leaderboard:
-                        LeaderBoardView()
+                        LeaderBoardView(selectedTab: $selectedTab, friendID: $friendID)
                     case .profile:
                         ProfileView()
                     case .login:
@@ -53,6 +55,8 @@ struct MainContainerView: View {
                         TakePhotoView(selectedTab: $selectedTab)
                     case .feed:
                         FeedView()
+                    case .friendsWorkout:
+                        FriendsPrevWorkouts(friendID: $friendID)
                     }
                 }
                 .navigationBarHidden(true)

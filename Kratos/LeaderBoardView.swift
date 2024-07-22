@@ -1,15 +1,10 @@
-//
-//  LeaderBoardView.swift
-//  Kratos
-//
-//  Created by Dhruv Bhagavatula on 6/17/24.
-//
-
 import SwiftUI
 import FirebaseAuth
 
 struct LeaderBoardView: View {
     @ObservedObject var firestoreService = FirestoreService()
+    @Binding var selectedTab: Tab
+    @Binding var friendID: String
     private let currentUserID = Auth.auth().currentUser?.uid
 
     var body: some View {
@@ -45,24 +40,51 @@ struct LeaderBoardView: View {
                         
                         List {
                             ForEach(Array(firestoreService.leaderboardEntries.enumerated()), id: \.element.id) { index, entry in
-                                HStack {
-                                    Text(entry.name)
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                    Text("\(entry.score)")
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                        .foregroundColor(.white)
+                                if entry.id == currentUserID {
+                                    HStack {
+                                        Text(entry.name)
+                                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                            .foregroundColor(.white)
+                                        Spacer()
+                                        Text("\(entry.score)")
+                                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding()
+                                    .background(
+                                        index == 0 ? Color.yellow : // Gold for 1st place
+                                        index == 1 ? Color.gray :  // Silver for 2nd place
+                                        index == 2 ? Color.brown : // Bronze for 3rd place
+                                        Color(red: 0.16, green: 0.18, blue: 0.2) // Default background color
+                                    )
+                                    .cornerRadius(10)
+                                    .shadow(color: Color.blue.opacity(0.5), radius: 5, x: 0, y: 5)
+                                } else {
+                                    Button(action: {
+                                        selectedTab = .friendsWorkout
+                                        friendID = entry.id
+                                    }) {
+                                        HStack {
+                                            Text(entry.name)
+                                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                .foregroundColor(.white)
+                                            Spacer()
+                                            Text("\(entry.score)")
+                                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                .foregroundColor(.white)
+                                        }
+                                        .padding()
+                                        .background(
+                                            index == 0 ? Color.yellow : // Gold for 1st place
+                                            index == 1 ? Color.gray :  // Silver for 2nd place
+                                            index == 2 ? Color.brown : // Bronze for 3rd place
+                                            Color(red: 0.16, green: 0.18, blue: 0.2) // Default background color
+                                        )
+                                        .cornerRadius(10)
+                                        .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
+                                    }
+                                    .buttonStyle(PlainButtonStyle()) // Make the whole row tappable
                                 }
-                                .padding()
-                                .background(
-                                    index == 0 ? Color.yellow : // Gold for 1st place
-                                    index == 1 ? Color.gray :  // Silver for 2nd place
-                                    index == 2 ? Color.brown : // Bronze for 3rd place
-                                    Color(red: 0.16, green: 0.18, blue: 0.2) // Default background color
-                                )
-                                .cornerRadius(10)
-                                .shadow(color: entry.id == currentUserID ? Color.blue.opacity(0.5) : Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
                             }
                             .listRowBackground(Color(red: 0.16, green: 0.18, blue: 0.2))
                         }
@@ -71,7 +93,6 @@ struct LeaderBoardView: View {
                         .background(Color.clear)
                         .scrollContentBackground(.hidden)
                         .padding(.top, geometry.size.height * 0.01)
-
                     }
                     .offset(y: -geometry.size.height * 0.09)
                     .onAppear {
@@ -80,9 +101,10 @@ struct LeaderBoardView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
-        }
+    }
 }
 
 #Preview {
-    LeaderBoardView()
+    LeaderBoardView(selectedTab: .constant(.home), friendID: .constant(""))
 }
+
