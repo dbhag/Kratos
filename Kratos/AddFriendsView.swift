@@ -149,7 +149,7 @@ struct AddFriendsView: View {
         VStack {
             GeometryReader { geometry in
                 List(searchResults) { user in
-                    HStack {
+                    HStack(spacing: 5) {
                         Text(user.username)
                             .foregroundColor(.white)
                             .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
