@@ -104,28 +104,40 @@ struct ProfileView: View {
                                     Text(post.timestamp.dateValue(), style: .date)
                                         .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
                                         .foregroundColor(.gray)
-                                    AsyncImage(url: URL(string: post.photoURL)) { phase in
-                                        if let image = phase.image {
-                                            image
-                                                .resizable()
-                                                //.scaledToFit()
-                                                .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.3)
-                                                .aspectRatio(contentMode: .fit)
-                                                //.clipped()
-                                                //.contentShape(Rectangle())
-                                        } else if phase.error != nil {
-                                            Text("Error loading image")
-                                                .foregroundColor(.red)
-                                        } else {
-                                            ProgressView()
+                                    if let url = URL(string: post.photoURL) {
+                                        AsyncImage(url: url) { phase in
+                                            switch phase {
+                                            case .empty:
+                                                ProgressView()
+                                                    .frame(maxHeight: geometry.size.height/3)
+                                            case .success(let image):
+                                                ZStack {
+                                                    RoundedRectangle(cornerRadius: 10)
+                                                        .fill(Color(red: 0.16, green: 0.18, blue: 0.2)) // Change this to match your background color
+                                                        .frame(maxHeight: geometry.size.height/3)
+                                                    image
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fit)
+                                                        .frame(maxHeight: geometry.size.height/3)
+                                                        .cornerRadius(40)
+                                                }
+                                            case .failure:
+                                                Image(systemName: "photo")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(maxHeight: geometry.size.height/3)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                            @unknown default:
+                                                EmptyView()
+                                            }
                                         }
                                     }
-                                    .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.3)
-                                    .background(Color.gray)
-                                    .cornerRadius(10)
+                                    /*.frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.3)
+                                    .background(Color(red: 0.16, green: 0.18, blue: 0.2))
+                                    .cornerRadius(10)*/
                                 }
                                 .padding()
-                                .background(Color(red: 0.16, green: 0.18, blue: 0.2).opacity(0.8))
+                                .background(Color(red: 0.16, green: 0.18, blue: 0.2)/*.opacity(0.8)*/)
                                 .cornerRadius(10)
                             }
                         }

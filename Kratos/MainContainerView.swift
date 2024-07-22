@@ -185,7 +185,7 @@ struct TaskbarView: View {
                         //.padding(.vertical, -geometry.size.height * 0.09)
                             .offset(y: geometry.size.height * 0.07)
                         
-                        if showPlusButton && selectedTab != .newWorkout {
+                        if showPlusButton && selectedTab != .newWorkout && selectedTab != .profile {
                             Button(action: {
                                 selectedTab = .newWorkout
                             }) {

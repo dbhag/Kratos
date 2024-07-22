@@ -1,5 +1,4 @@
 import SwiftUI
-import FirebaseFirestore
 import SceneKit
 
 struct ContentView: View {
