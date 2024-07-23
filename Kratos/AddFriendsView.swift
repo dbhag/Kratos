@@ -43,6 +43,7 @@ struct AddFriendsView: View {
                 .edgesIgnoringSafeArea(.all)*/
                 .onTapGesture {
                    self.hideKeyboard()
+                   showOverlay = false
                 }
         
                 
@@ -178,10 +179,10 @@ struct AddFriendsView: View {
             // Ensure background to avoid interaction issues
             .cornerRadius(10)
             .frame(maxWidth: .infinity, maxHeight: .infinity) // Ensure the overlay takes the full space
-            .onTapGesture {
+            /*.onTapGesture {
                 // Dismiss overlay when tapped outside
                 self.showOverlay = false
-            }
+            }*/
         }
         //.offset(y: -geometry.size.height * 0.05)
     }
