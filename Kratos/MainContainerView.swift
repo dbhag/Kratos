@@ -15,6 +15,7 @@ enum Tab {
     case takePhoto
     case feed
     case friendsWorkout
+    case workoutDescription
 }
 
 struct MainContainerView: View {
@@ -24,6 +25,7 @@ struct MainContainerView: View {
     @State private var showStreak: Bool = true
     @State private var isTyping: Bool = false
     @State private var friendID: String = ""
+    @State private var selectedWorkouts: [String] = []
     @ObservedObject private var firestoreService = FirestoreService()
     private let db = Firestore.firestore()
     
@@ -46,7 +48,9 @@ struct MainContainerView: View {
                     case .addFriends:
                         AddFriendsView(isTyping: $isTyping)
                     case .newWorkout:
-                        NewWorkoutView(selectedTab: $selectedTab)
+                        NewWorkoutView(selectedWorkouts: $selectedWorkouts, selectedTab: $selectedTab)
+                    case .workoutDescription:
+                        WorkoutDescriptionView(selectedWorkouts: $selectedWorkouts, selectedTab: $selectedTab, isTyping: $isTyping)
                     case .progress:
                         FullProgressMapView(firestoreService: FirestoreService(), showPlusButton: $showPlusButton)
                     case .workoutGoals:
@@ -62,12 +66,12 @@ struct MainContainerView: View {
                 .navigationBarHidden(true)
                 .onChange(of: selectedTab) {
                     print("MainContainerView: selectedTab changed to \(selectedTab)")
-                    if selectedTab == .progress {
+                    if selectedTab == .progress || selectedTab == .workoutDescription {
                         showPlusButton = false
                     } else {
                         showPlusButton = true
                     }
-                    if selectedTab == .profile || selectedTab == .workoutGoals || selectedTab == .feed || selectedTab == .takePhoto
+                    if selectedTab == .profile || selectedTab == .workoutGoals || selectedTab == .feed || selectedTab == .takePhoto || selectedTab == .workoutDescription
                     {
                         showStreak = false
                     }
@@ -180,7 +184,7 @@ struct TaskbarView: View {
                 
                 Spacer()
                 
-                if selectedTab != .takePhoto && !isTyping {
+                if selectedTab != .takePhoto && selectedTab != .workoutDescription && !isTyping {
                     ZStack {
                         Image(.rectangle41)
                             .resizable()

@@ -136,10 +136,11 @@ class FirestoreService: ObservableObject {
 
                 self.previousWorkouts = workoutEntries.compactMap { entry in
                     guard let exercises = entry["workouts"] as? [String],
-                          let timestamp = entry["timestamp"] as? Timestamp else {
-                        return nil
+                          let timestamp = entry["timestamp"] as? Timestamp,
+                          let description = entry["description"] as? String else {
+                            return nil
                     }
-                    return Workout(id: UUID().uuidString, exercises: exercises, timestamp: timestamp.dateValue())
+                    return Workout(id: UUID().uuidString, exercises: exercises, timestamp: timestamp.dateValue(), description: description)
                 }.sorted(by: { $0.timestamp > $1.timestamp })
 
                 print("Fetched workouts: \(self.previousWorkouts)")  // Debug print
@@ -216,5 +217,6 @@ struct Workout: Identifiable {
     var id:  String
     var exercises: [String]
     var timestamp: Date
+    var description: String
 }
 

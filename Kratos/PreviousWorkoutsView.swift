@@ -66,13 +66,16 @@ struct WorkoutRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Workout Date: \(workout.timestamp, formatter: itemFormatter)")
-                .font(.custom("AmericanTypewriter", size: 16))
+                .font(.custom("Marker Felt", size: 16))
                 .foregroundColor(.white)
             ForEach(workout.exercises, id: \.self) { exercise in
                 Text(exercise)
-                    .font(.custom("AmericanTypewriter", size: 14))
+                    .font(.custom("Marker Felt", size: 14))
                     .foregroundColor(.gray)
             }
+            Text(workout.description)
+                .font(.custom("Marker Felt", size: 14))
+                .foregroundColor(.white)
         }
         .padding()
         .background(Color(red: 0.16, green: 0.18, blue: 0.2).opacity(0.8))
