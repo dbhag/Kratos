@@ -197,7 +197,7 @@ struct TaskbarView: View {
                             Button(action: {
                                 selectedTab = .newWorkout
                             }) {
-                                Image(.plusplus)
+                                Image(.plus)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.2)
@@ -213,7 +213,7 @@ struct TaskbarView: View {
                         Button(action: {
                             selectedTab = .home
                         }) {
-                            Image(.frame1)
+                            Image(.frame11)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
@@ -221,19 +221,19 @@ struct TaskbarView: View {
                         Button(action: {
                             selectedTab = .previousWorkouts
                         }) {
-                            Image(.vector)
+                            Image(.iconParkOutlineDumbbell)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: geometry.size.width * 0.1, height: geometry.size.width * 0.1)
+                                .frame(width: geometry.size.width * 0.11, height: geometry.size.width * 0.11)
                         }
                         .offset(x: -geometry.size.width * 0.07)
                         Button(action: {
                             selectedTab = .leaderboard
                         }) {
-                            Image(.vector1)
+                            Image(.materialSymbolsLightLeaderboardOutlineRounded)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
+                                .frame(width: geometry.size.width * 0.12, height: geometry.size.width * 0.12)
                         }
                         .offset(x: geometry.size.width * 0.058)
                         Button(action: {
@@ -242,7 +242,7 @@ struct TaskbarView: View {
                             Image(systemName: "camera")
                                 .resizable()
                                 .foregroundColor(.white)
-                                .opacity(/*@START_MENU_TOKEN@*/0.8/*@END_MENU_TOKEN@*/)
+                                .opacity(0.9)
                                 .scaledToFit()
                                 .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
                         }

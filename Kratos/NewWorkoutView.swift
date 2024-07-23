@@ -105,6 +105,7 @@ struct NewWorkoutView: View {
                             .padding()
                         }
                         .padding(.vertical, geometry.size.height * 0.03)
+                        .offset(y: -geometry.size.height * 0.0175)
                         
                         Spacer()
                                 
