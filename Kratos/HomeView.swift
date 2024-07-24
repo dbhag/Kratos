@@ -56,7 +56,7 @@ struct ContentView: View {
                                 }(),
                                options: [.autoenablesDefaultLighting, .allowsCameraControl]
                             )
-                            .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.4)
+                            .frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.4)
                             .background(Color(red: 0.16, green: 0.18, blue: 0.2)) // Ensure background is clear
                             .cornerRadius(20)
                             //.padding(.top, -14)
@@ -89,7 +89,7 @@ struct ContentView: View {
                                         }(),
                                         options: [.autoenablesDefaultLighting, .allowsCameraControl]
                                     )
-                                    .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.1)
+                                    .frame(width: geometry.size.width * 0.25, height: geometry.size.height * 0.1)
                                     .cornerRadius(20)
                                     //.padding(.leading, 50)
                                     .padding(.leading, geometry.size.width * 0.11)
@@ -125,7 +125,7 @@ struct ContentView: View {
                                         }(),
                                         options: [.autoenablesDefaultLighting, .allowsCameraControl]
                                     )
-                                    .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.1)
+                                    .frame(width: geometry.size.width * 0.25, height: geometry.size.height * 0.1)
                                     //.background(Color.white.opacity(0.09))
                                     .cornerRadius(20)
                                     //.padding(.trailing, 50)

@@ -40,8 +40,9 @@ class FirestoreService: ObservableObject {
                         }
 
                         let friendIDs = snapshot?.documents.compactMap { $0.documentID } ?? []
-
+                        print("Fetched friend: \(friendIDs)")
                         guard !friendIDs.isEmpty else {
+                            print("got here")
                             self.leaderboardEntries = [currentUserEntry]
                             return
                         }
@@ -74,8 +75,10 @@ class FirestoreService: ObservableObject {
                           let score = data["score"] as? Int else { return nil }
                     return LeaderboardEntry(id: document.documentID, name: name, score: score)
                 } ?? []
+                print("Fetched friendEntries: \(friendsEntries)")
                 friendsEntries.append(currentUserEntry)
                 self.leaderboardEntries = friendsEntries.sorted(by: { $0.score > $1.score })
+                print("Fetched leaderboard: \(self.leaderboardEntries)")
             }
     }
 
@@ -124,6 +127,7 @@ class FirestoreService: ObservableObject {
                         return RecentWorkout(id: document.documentID, username: username, recentWorkout: recentWorkout.dateValue())
                     } ?? []
                     self.recentWorkouts = friendWorkouts.sorted(by: { $0.recentWorkout > $1.recentWorkout })
+                    print("Fetched workouts: \(self.recentWorkouts)")
                 }
         }
     func fetchPreviousWorkouts() {
