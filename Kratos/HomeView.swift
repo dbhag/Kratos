@@ -21,17 +21,24 @@ struct ContentView: View {
                                 .minimumScaleFactor(0.8)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .offset(x: 0, y: -geometry.size.height * 0.07)
+                                .offset(x: 0, y: -geometry.size.height * 0.0325)
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
                         .padding(.top, geometry.size.height * 0.05)
+                       
+                        Spacer()
 
+                        
                         // 3D Model View
                         if let modelName = getModelName(for: firestoreService.userScore) {
+                            //print("Loading model: \(modelName)")
                             SceneView(
                                 scene: {
-                                    let scene = SCNScene(named: modelName)!
+                                    guard let scene = SCNScene(named: "art.scnassets/\(modelName)") else {
+                                                    print("Failed to load the scene with model name: \(modelName)")
+                                                    return SCNScene() // Return an empty scene if loading fails
+                                                }
                                     
                                     // Set the scene background color to match the app's theme
                                     scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
@@ -47,15 +54,18 @@ struct ContentView: View {
                                     
                                     return scene
                                 }(),
-                                options: [.autoenablesDefaultLighting, .allowsCameraControl]
+                               options: [.autoenablesDefaultLighting, .allowsCameraControl]
                             )
                             .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.4)
                             .background(Color(red: 0.16, green: 0.18, blue: 0.2)) // Ensure background is clear
                             .cornerRadius(20)
-                            .padding(.top, -14)
-                            .offset(y: -geometry.size.height * 0.035)
+                            //.padding(.top, -14)
+                            //.padding(.top, -geometry.size.height * 0.02)
+                            .offset(y: -geometry.size.height * 0.05)
                         }
-                        //.padding(.top, -14)
+                        
+                        Spacer()
+
 
                         // Progress Snippet View
                         ZStack {
@@ -73,7 +83,7 @@ struct ContentView: View {
                                 if let modelName = getModelName(for: firestoreService.userScore) {
                                     SceneView(
                                         scene: {
-                                            let scene = SCNScene(named: modelName)!
+                                            let scene = SCNScene(named: "art.scnassets/\(modelName)")!
                                             scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
                                             return scene
                                         }(),
@@ -81,7 +91,8 @@ struct ContentView: View {
                                     )
                                     .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.1)
                                     .cornerRadius(20)
-                                    .padding(.leading, 50)
+                                    //.padding(.leading, 50)
+                                    .padding(.leading, geometry.size.width * 0.11)
                                     //.scaledToFit()
                                 }
                                 
@@ -108,7 +119,7 @@ struct ContentView: View {
                                 if let nextModelName = nextAnimal.modelName {
                                     SceneView(
                                         scene: {
-                                            let scene = SCNScene(named: nextModelName)!
+                                            let scene = SCNScene(named: "art.scnassets/\(nextModelName)")!
                                             scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
                                             return scene
                                         }(),
@@ -117,12 +128,13 @@ struct ContentView: View {
                                     .frame(width: geometry.size.width * 0.15, height: geometry.size.height * 0.1)
                                     //.background(Color.white.opacity(0.09))
                                     .cornerRadius(20)
-                                    .padding(.trailing, 50)
+                                    //.padding(.trailing, 50)
+                                    .padding(.trailing, geometry.size.width * 0.11)
                                 }
                             }
                         }
-                        .padding(.vertical, geometry.size.height * 0.0)
-                        .offset(y: -geometry.size.height * 0.03)
+                        //.padding(.vertical, geometry.size.height * 0.0)
+                        .offset(y: -geometry.size.height * 0.07)
                         
                         // Recent Workouts View
                         ZStack {
@@ -151,7 +163,7 @@ struct ContentView: View {
                             }
                         }
                         .padding(.vertical, geometry.size.height * 0.03)
-                        .offset(y: -geometry.size.height * 0.045)
+                        .offset(y: -geometry.size.height * 0.085)
                     }
                     .offset(y: geometry.size.height * -0.02)
                     .onAppear {
@@ -159,6 +171,7 @@ struct ContentView: View {
                         firestoreService.fetchUserScore() // Fetch user score on appear
                     }
                 }
+                //.offset(y: -geometry.size.height * 0.025)
             }
         //}
         //.navigationBarBackButtonHidden(true)

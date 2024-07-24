@@ -39,7 +39,7 @@ struct FullProgressMapView: View {
                                     if let modelName = getModelName(for: scoreForIndex(index)) {
                                         SceneView(
                                             scene: {
-                                                let scene = SCNScene(named: modelName)!
+                                                let scene = SCNScene(named: "art.scnassets/\(modelName)")!
                                                 scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
                                                 
                                                     /*if !isUnlocked(for: scoreForIndex(index)) {

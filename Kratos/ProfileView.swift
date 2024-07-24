@@ -31,7 +31,7 @@ struct ProfileView: View {
                         if let modelName = getModelName(for: firestoreService.userScore) {
                             SceneView(
                                 scene: {
-                                    let scene = SCNScene(named: modelName)!
+                                    let scene = SCNScene(named: "art.scnassets/\(modelName)")!
                                     
                                     // Set the scene background color to match the app's theme
                                     scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1.0)
