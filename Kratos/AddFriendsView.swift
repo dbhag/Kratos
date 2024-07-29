@@ -330,6 +330,7 @@ struct AddFriendsView: View {
                             return
                         }
                         print("Friend request from \(user.username) accepted and document deleted")
+                        fetchIncomingRequests()
                     }
                 }
             }
