@@ -321,17 +321,20 @@ struct AddFriendsView: View {
                 }
                 guard let documents = snapshot?.documents else { return }
                 for document in documents {
-                    document.reference.updateData(["status": "accepted"]) { error in
+                    // Add friends to each other
+                    self.addFriendsToEachOther(currentUserID: currentUserID, friendUser: user)
+                    // Delete the friend request document
+                    document.reference.delete { error in
                         if let error = error {
-                            print("Error updating friend request status: \(error.localizedDescription)")
+                            print("Error deleting friend request document: \(error.localizedDescription)")
                             return
                         }
-                        print("Friend request from \(user.username) accepted")
-                        self.addFriendsToEachOther(currentUserID: currentUserID, friendUser: user)
+                        print("Friend request from \(user.username) accepted and document deleted")
                     }
                 }
             }
     }
+
 
     private func addFriendsToEachOther(currentUserID: String, friendUser: User) {
         let friendsCollection = db.collection("friends")
