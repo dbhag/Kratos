@@ -90,7 +90,7 @@ struct MainContainerView: View {
                 VStack {
                     GeometryReader { geometry in
                         HStack {
-                            if streak > 0 && showPlusButton && showStreak {
+                            if streak > 0 && showPlusButton && showStreak && !isTyping {
                                 StreakFlameView(streak: streak)
                                     .frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
                                     .offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.045)
@@ -165,7 +165,7 @@ struct TaskbarView: View {
                 // Add Friends button at the top
                 HStack {
                     Spacer()
-                    if showPlusButton && showStreak {
+                    if showPlusButton && showStreak && !isTyping {
                         Button(action: {
                             selectedTab = .addFriends
                         }) {
