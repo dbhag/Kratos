@@ -93,7 +93,7 @@ struct MainContainerView: View {
                             if streak > 0 && showPlusButton && showStreak && !isTyping {
                                 StreakFlameView(streak: streak)
                                     .frame(width: geometry.size.width * 0.1, height: geometry.size.height * 0.1)
-                                    .offset(x: geometry.size.width * 0.62, y: geometry.size.height * 0.042)
+                                    .offset(x: geometry.size.width * 0.62, y: geometry.size.height * 0.0425)
                             }
                             else if selectedTab == .profile && !showStreak
                             {
@@ -127,7 +127,7 @@ struct MainContainerView: View {
                             else
                             {
                                 Spacer().frame(width: geometry.size.width * 0.1, height: geometry.size.height * 0.1)
-                                Spacer().offset(x: geometry.size.width * 0.62, y: geometry.size.height * 0.042)
+                                Spacer().offset(x: geometry.size.width * 0.62, y: geometry.size.height * 0.0425)
                             }
                         }
                     }
