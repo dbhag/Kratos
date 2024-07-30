@@ -92,8 +92,8 @@ struct MainContainerView: View {
                         HStack {
                             if streak > 0 && showPlusButton && showStreak && !isTyping {
                                 StreakFlameView(streak: streak)
-                                    .frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
-                                    .offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.045)
+                                    .frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.25)
+                                    .offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.075)
                             }
                             else if selectedTab == .profile && !showStreak
                             {
@@ -126,8 +126,8 @@ struct MainContainerView: View {
                             
                             else
                             {
-                                Spacer().frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.21)
-                                Spacer().offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.045)
+                                Spacer().frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.25)
+                                Spacer().offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.075)
                             }
                         }
                     }
@@ -268,7 +268,8 @@ struct StreakFlameView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                 Text("\(streak)")
-                    .font(.custom("Marker Felt", size: geometry.size.width * 0.2))
+                //Text("1")
+                    .font(.custom("Marker Felt", size: geometry.size.width * 0.18))
                     .foregroundColor(.black)
                     .offset(x: -geometry.size.width * 0.03, y: geometry.size.height * 0.24)
             }
