@@ -147,15 +147,29 @@ struct ContentView: View {
                             VStack {
                                 ForEach(firestoreService.recentWorkouts.prefix(2)) { workout in
                                     HStack {
-                                        Text(workout.username)
-                                            .foregroundColor(.white)
-                                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        HStack{
+                                            Image(systemName: "person.fill")
+                                                .foregroundColor(.white)
+                                                .font(.system(size: geometry.size.width * 0.05))
                                             
-                                        Text("\(timeAgoSinceDate(workout.recentWorkout))")
-                                            .foregroundColor(.white)
-                                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
-                                            .frame(maxWidth: .infinity, alignment: .trailing)
+                                            Text(workout.username)
+                                                .foregroundColor(.white)
+                                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                        //Spacer()
+                                        HStack{
+                                            Image(systemName: "clock.fill")
+                                                .foregroundColor(.white)
+                                                .font(.system(size: geometry.size.width * 0.05))
+                                            
+                                            Text("\(timeAgoSinceDate(workout.recentWorkout))")
+                                                .foregroundColor(.white)
+                                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                .lineLimit(1)
+                                                .minimumScaleFactor(0.75)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
                                     }
                                     .padding(.vertical, geometry.size.height * 0.02)
                                     .padding(.horizontal, geometry.size.width * 0.14)
