@@ -92,8 +92,8 @@ struct MainContainerView: View {
                         HStack {
                             if streak > 0 && showPlusButton && showStreak && !isTyping {
                                 StreakFlameView(streak: streak)
-                                    .frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.25)
-                                    .offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.075)
+                                    .frame(width: geometry.size.width * 0.1, height: geometry.size.height * 0.1)
+                                    .offset(x: geometry.size.width * 0.62, y: geometry.size.height * 0.042)
                             }
                             else if selectedTab == .profile && !showStreak
                             {
@@ -126,8 +126,8 @@ struct MainContainerView: View {
                             
                             else
                             {
-                                Spacer().frame(width: geometry.size.width * 0.28, height: geometry.size.height * 0.25)
-                                Spacer().offset(x: geometry.size.width * 0.68, y: -geometry.size.height * 0.075)
+                                Spacer().frame(width: geometry.size.width * 0.1, height: geometry.size.height * 0.1)
+                                Spacer().offset(x: geometry.size.width * 0.62, y: geometry.size.height * 0.042)
                             }
                         }
                     }
@@ -264,14 +264,14 @@ struct StreakFlameView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image(.giphy2)
+                Image(.propane)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                 Text("\(streak)")
-                //Text("1")
-                    .font(.custom("Marker Felt", size: geometry.size.width * 0.18))
-                    .foregroundColor(.black)
-                    .offset(x: -geometry.size.width * 0.03, y: geometry.size.height * 0.24)
+                //Text("95")
+                    .font(.custom("Marker Felt", size: geometry.size.width * 0.6))
+                    .foregroundColor(.white)
+                    .offset(x: geometry.size.width * 0.8, y: geometry.size.height * 0.1)
             }
         }
     }
