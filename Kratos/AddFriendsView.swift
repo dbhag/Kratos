@@ -205,7 +205,7 @@ struct AddFriendsView: View {
                 return
             }
 
-            guard let document = document else { return }
+            //guard let document = document else { return }
 
             let friendsCollection = db.collection("friends").document(currentUserID).collection("friendsList")
 
@@ -227,7 +227,10 @@ struct AddFriendsView: View {
                         }
                         guard let documents = snapshot?.documents else { return }
 
-                        self.searchResults = documents.compactMap { doc in
+                        self.searchResults = []
+                        let group = DispatchGroup()
+
+                        for doc in documents {
                             let data = doc.data()
                             let userId = doc.documentID
                             let username = data["username"] as? String ?? ""
@@ -235,16 +238,33 @@ struct AddFriendsView: View {
 
                             // Exclude the current user and their friends
                             if userId != currentUserID && !friends.contains(userId) {
-                                return User(id: userId, username: username, email: email)
+                                group.enter()
+                                db.collection("friendRequests")
+                                    .whereField("from", isEqualTo: currentUserID)
+                                    .whereField("to", isEqualTo: userId)
+                                    .whereField("status", isEqualTo: "pending")
+                                    .getDocuments { snapshot, error in
+                                        defer { group.leave() }
+                                        if let error = error {
+                                            print("Error checking friend requests: \(error.localizedDescription)")
+                                            return
+                                        }
+
+                                        if snapshot?.documents.isEmpty == true {
+                                            self.searchResults.append(User(id: userId, username: username, email: email))
+                                        }
+                                    }
                             }
-                            return nil
                         }
 
-                        self.showOverlay = !self.searchResults.isEmpty
+                        group.notify(queue: .main) {
+                            self.showOverlay = !self.searchResults.isEmpty
+                        }
                     }
             }
         }
     }
+
 
     private func addFriend(user: User) {
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
@@ -268,6 +288,8 @@ struct AddFriendsView: View {
             }
             print("Friend request sent to \(user.username)")
         }
+        self.hideKeyboard()
+        showOverlay = false
     }
 
 
