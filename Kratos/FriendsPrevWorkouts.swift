@@ -100,6 +100,14 @@ struct WorkoutRowViewFriend: View {
             Text(workout.description)
                 .font(.custom("Marker Felt", size: 14))
                 .foregroundColor(.white)
+                .contextMenu {
+                    Button(action: {
+                        UIPasteboard.general.string = workout.description
+                    }) {
+                        Text("Copy Description")
+                        Image(systemName: "doc.on.doc")
+                    }
+                }
         }
         .padding()
         .background(Color(red: 0.16, green: 0.18, blue: 0.2).opacity(0.8))
