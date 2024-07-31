@@ -2,7 +2,7 @@ import SwiftUI
 import SceneKit
 
 struct ContentView: View {
-    @ObservedObject var firestoreService = FirestoreService()
+    @EnvironmentObject var firestoreService: FirestoreService
     @Binding var selectedTab: Tab
     @Binding var showPlusButton: Bool
 
@@ -183,6 +183,10 @@ struct ContentView: View {
                     .onAppear {
                         firestoreService.fetchFriendsRecentWorkouts()
                         firestoreService.fetchUserScore() // Fetch user score on appear
+                    }
+                    .onDisappear 
+                    {
+                        firestoreService.stopListening()
                     }
                 }
                 //.offset(y: -geometry.size.height * 0.025)

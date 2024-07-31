@@ -29,6 +29,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
   // register app delegate for Firebase setup
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
   @StateObject private var authViewModel = AuthViewModel()
+  @StateObject var firestoreService = FirestoreService()
 
 
   var body: some Scene {
@@ -36,7 +37,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         if authViewModel.state == .signedIn {
             MainContainerView()
                 .environmentObject(authViewModel)
-        } 
+                .environmentObject(firestoreService)
+        }
         else {
             LoginView()
             .environmentObject(authViewModel)

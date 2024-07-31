@@ -26,7 +26,7 @@ struct MainContainerView: View {
     @State private var isTyping: Bool = false
     @State private var friendID: String = ""
     @State private var selectedWorkouts: [String] = []
-    @ObservedObject private var firestoreService = FirestoreService()
+    @EnvironmentObject private var firestoreService: FirestoreService
     private let db = Firestore.firestore()
     
     
