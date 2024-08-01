@@ -2,7 +2,7 @@ import SwiftUI
 import FirebaseAuth
 
 struct LeaderBoardView: View {
-    @ObservedObject var firestoreService = FirestoreService()
+    @EnvironmentObject var firestoreService: FirestoreService
     @Binding var selectedTab: Tab
     @Binding var friendID: String
     private let currentUserID = Auth.auth().currentUser?.uid

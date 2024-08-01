@@ -3,7 +3,7 @@ import FirebaseFirestore
 import FirebaseAuth
 
 struct FeedView: View {
-    @ObservedObject var feedViewModel = FeedViewModel()
+    @EnvironmentObject var feedViewModel: FeedViewModel
 
     var body: some View {
         NavigationView {

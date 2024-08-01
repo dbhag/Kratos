@@ -30,6 +30,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
   @StateObject private var authViewModel = AuthViewModel()
   @StateObject var firestoreService = FirestoreService()
+  @StateObject var feedViewModel = FeedViewModel()
 
 
   var body: some Scene {
@@ -38,6 +39,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             MainContainerView()
                 .environmentObject(authViewModel)
                 .environmentObject(firestoreService)
+                .environmentObject(feedViewModel)
         }
         else {
             LoginView()

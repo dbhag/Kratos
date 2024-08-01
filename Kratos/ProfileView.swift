@@ -2,8 +2,10 @@ import SwiftUI
 import SceneKit
 
 struct ProfileView: View {
-    @ObservedObject var firestoreService = FirestoreService()
-    @ObservedObject var feedViewModel = FeedViewModel()
+    //@ObservedObject var firestoreService = FirestoreService()
+    @EnvironmentObject var firestoreService: FirestoreService
+    @EnvironmentObject var feedViewModel: FeedViewModel
+    //@ObservedObject var feedViewModel = FeedViewModel()
 
     var body: some View {
         GeometryReader { geometry in

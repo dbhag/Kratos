@@ -6,6 +6,7 @@ struct NewWorkoutView: View {
     @State private var cardioOptions: [String] = ["Run", "Walk", "Bike", "Swim", "Row", "HIIT"]
     @State private var selectedLiftOptions: Set<String> = []
     @State private var selectedCardioOptions: Set<String> = []
+    @State private var showAlert = false
     @Binding var selectedWorkouts: Array<String>
     @EnvironmentObject var workoutModel: WorkoutModel
     
@@ -35,7 +36,7 @@ struct NewWorkoutView: View {
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
                         .padding(.top, geometry.size.height * 0.05)
-
+                        
                         HStack {
                             Text("Lift")
                                 .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
@@ -47,7 +48,7 @@ struct NewWorkoutView: View {
                                 .onTapGesture {
                                     isLiftSelected = true
                                 }
-
+                            
                             Text("Cardio")
                                 .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
                                 .foregroundColor(!isLiftSelected ? .white : .gray)
@@ -108,26 +109,36 @@ struct NewWorkoutView: View {
                         .offset(y: -geometry.size.height * 0.0175)
                         
                         Spacer()
-                                
-                                Button(action: {
-                                    navigateToDescription = true
-                                    selectedWorkouts = Array(selectedLiftOptions)
-                                    selectedWorkouts.append(contentsOf: selectedCardioOptions)
-                                    selectedTab = .workoutDescription
-                                    clearSelections()
-                                }) {
-                                    Text("Next")
-                                        .font(.headline)
-                                        .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.2))
-                                        .padding()
-                                        .frame(width: 220, height: 60)
-                                        .background(Color.white)
-                                        .cornerRadius(15.0)
-                                        .shadow(color: .gray, radius: 5, x: 0, y: 5)
-                                        .offset(y: -geometry.size.height * 0.03)
-                                }
-                                .padding(.bottom, geometry.size.height * 0.02)
-                                Spacer()
+                        
+                        Button(action: {
+                            selectedWorkouts = Array(selectedLiftOptions)
+                            selectedWorkouts.append(contentsOf: selectedCardioOptions)
+                            
+                            if selectedWorkouts.isEmpty {
+                                // Show alert if no options are selected
+                                showAlert = true
+                            } else {
+                                // Proceed with navigation and other actions
+                                navigateToDescription = true
+                                selectedTab = .workoutDescription
+                                clearSelections()
+                            }
+                        }) {
+                            Text("Next")
+                                .font(.headline)
+                                .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.2))
+                                .padding()
+                                .frame(width: 220, height: 60)
+                                .background(Color.white)
+                                .cornerRadius(15.0)
+                                .shadow(color: .gray, radius: 5, x: 0, y: 5)
+                                .offset(y: -geometry.size.height * 0.03)
+                        }
+                        .alert(isPresented: $showAlert) {
+                            Alert(title: Text("Alert"), message: Text("Please select an option to continue"), dismissButton: .default(Text("OK")))
+                        }
+                        .padding(.bottom, geometry.size.height * 0.02)
+                        Spacer()
                     }
                 }
             }

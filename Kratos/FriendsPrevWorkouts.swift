@@ -92,11 +92,12 @@ struct WorkoutRowViewFriend: View {
             Text("Workout Date: \(workout.timestamp, formatter: itemFormatter)")
                 .font(.custom("Marker Felt", size: 16))
                 .foregroundColor(.white)
-            ForEach(workout.exercises, id: \.self) { exercise in
-                Text(exercise)
-                    .font(.custom("Marker Felt", size: 14))
-                    .foregroundColor(.gray)
-            }
+            Text(workout.exercises.map { String($0) }.joined(separator: ", "))
+                .font(.custom("Marker Felt", size: 14))
+                .foregroundColor(.white.opacity(0.75))
+                .lineLimit(1) // Ensures that the list doesn't wrap and create a messy layout
+                //.padding(.top, 1)
+            //}
             Text(workout.description)
                 .font(.custom("Marker Felt", size: 14))
                 .foregroundColor(.white)
