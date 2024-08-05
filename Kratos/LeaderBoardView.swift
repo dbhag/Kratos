@@ -106,5 +106,6 @@ struct LeaderBoardView: View {
 
 #Preview {
     LeaderBoardView(selectedTab: .constant(.home), friendID: .constant(""))
+        .environmentObject(FirestoreService())
 }
 

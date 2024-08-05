@@ -79,7 +79,7 @@ struct ContentView: View {
                                     .cornerRadius(24)
                                     .shadow(color: Color.white.opacity(0.5), radius: 50, x: 5, y: 5)
                             }
-                            HStack {
+                            HStack(alignment: .center) {
                                 if let modelName = getModelName(for: firestoreService.userScore) {
                                     SceneView(
                                         scene: {
@@ -99,11 +99,11 @@ struct ContentView: View {
                                 let nextAnimal = getNextAnimal(for: firestoreService.userScore)
                                 let pointsToNextAnimal = nextAnimal.points - firestoreService.userScore
 
-                                VStack {
+                                VStack(alignment: .center) {
                                     Text("\(pointsToNextAnimal) points")
                                         .foregroundColor(.white)
                                         .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
-                                    
+                                        //.frame(height: geometry.size.height * 0.024)
                                     GeometryReader { geo in
                                         Path { path in
                                             let width = geo.size.width
@@ -126,6 +126,7 @@ struct ContentView: View {
                                         options: [.autoenablesDefaultLighting, .allowsCameraControl]
                                     )
                                     .frame(width: geometry.size.width * 0.25, height: geometry.size.height * 0.1)
+                                    .offset(y: geometry.size.height * 0.0055)
                                     //.background(Color.white.opacity(0.09))
                                     .cornerRadius(20)
                                     //.padding(.trailing, 50)
@@ -135,7 +136,6 @@ struct ContentView: View {
                         }
                         //.padding(.vertical, geometry.size.height * 0.0)
                         .offset(y: -geometry.size.height * 0.07)
-                        
                         // Recent Workouts View
                         ZStack {
                             Rectangle()
@@ -194,6 +194,20 @@ struct ContentView: View {
         //}
         //.navigationBarBackButtonHidden(true)
     }
+    private var progressToNextCharacter: Double {
+            let nextAnimal = getNextAnimal(for: firestoreService.userScore)
+            let progress = Double(firestoreService.userScore) / Double(nextAnimal.points)
+            return min(progress, 1.0)
+        }
+        
+        private var pointsToNextAnimal: Int {
+            let nextAnimal = getNextAnimal(for: firestoreService.userScore)
+            return nextAnimal.points - firestoreService.userScore
+        }
+    func positionModelAtBottom(_ node: SCNNode) {
+        let (min, _) = node.boundingBox
+            node.position.y -= min.y// Moves the model up by its lowest point
+    }
 
     // Helper function to get model name based on score
     func getModelName(for score: Int) -> String? {
@@ -201,7 +215,7 @@ struct ContentView: View {
         case 0..<200:
             return "frog.usdz"
         case 200..<400:
-            return "cat.usdz"
+            return "rabbit.usdz"
         case 400..<700:
             return "dog.usdz"
         case 700..<1000:
@@ -221,7 +235,7 @@ struct ContentView: View {
     func getNextAnimal(for score: Int) -> (modelName: String?, points: Int) {
         switch score {
         case 0..<200:
-            return ("cat.usdz", 200)
+            return ("rabbit.usdz", 200)
         case 200..<400:
             return ("dog.usdz", 400)
         case 400..<700:
@@ -276,4 +290,5 @@ func timeAgoSinceDate(_ date: Date) -> String {
 
 #Preview {
     ContentView(selectedTab: .constant(.home), showPlusButton: .constant(true))
+        .environmentObject(FirestoreService())
 }

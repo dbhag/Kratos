@@ -279,5 +279,6 @@ struct StreakFlameView: View {
 
 #Preview {
     MainContainerView()
+        .environmentObject(FirestoreService())
 }
 

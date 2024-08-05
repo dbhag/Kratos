@@ -93,7 +93,7 @@ struct FullProgressMapView: View {
         case 0..<200:
             return "frog.usdz"
         case 200..<400:
-            return "cat.usdz"
+            return "rabbit.usdz"
         case 400..<700:
             return "dog.usdz"
         case 700..<1000:

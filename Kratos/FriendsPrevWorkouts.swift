@@ -88,32 +88,70 @@ struct WorkoutRowViewFriend: View {
     var workout: Workout
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            Text("Workout Date: \(workout.timestamp, formatter: itemFormatter)")
-                .font(.custom("Marker Felt", size: 16))
-                .foregroundColor(.white)
-            Text(workout.exercises.map { String($0) }.joined(separator: ", "))
-                .font(.custom("Marker Felt", size: 14))
-                .foregroundColor(.white.opacity(0.75))
-                .lineLimit(1) // Ensures that the list doesn't wrap and create a messy layout
-                //.padding(.top, 1)
-            //}
-            Text(workout.description)
-                .font(.custom("Marker Felt", size: 14))
-                .foregroundColor(.white)
-                .contextMenu {
-                    Button(action: {
-                        UIPasteboard.general.string = workout.description
-                    }) {
-                        Text("Copy Description")
-                        Image(systemName: "doc.on.doc")
-                    }
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "calendar")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .foregroundColor(.white)
+
+                Text("Workout Date: \(workout.timestamp, formatter: itemFormatter)")
+                    .font(.custom("Marker Felt", size: 18))
+                    .foregroundColor(.white)
+                    //.fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            if !workout.exercises.isEmpty {
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "list.bullet")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(.white)
+                    
+                    Text(workout.exercises.joined(separator: ", "))
+                        .font(.custom("Marker Felt", size: 16))
+                        .foregroundColor(.white.opacity(0.75))
+                        .lineLimit(1)
+                        //.fixedSize(horizontal: false, vertical: true)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            // Only show description if it exists
+            if !workout.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "figure.strengthtraining.traditional")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(.white)
+
+                    Text(workout.description)
+                        .font(.custom("Marker Felt", size: 16))
+                        .foregroundColor(.white)
+                        .padding(.top, 2)
+                        .contextMenu {
+                            Button(action: {
+                                UIPasteboard.general.string = workout.description
+                            }) {
+                                Text("Copy Description")
+                                Image(systemName: "doc.on.doc")
+                            }
+                        }
+                        //.frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
         .padding()
         .background(Color(red: 0.16, green: 0.18, blue: 0.2).opacity(0.8))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
+        .padding(.horizontal)
+        .frame(maxWidth: .infinity, alignment: .leading) // Setting a minimum width and allowing expansion
     }
 }
 

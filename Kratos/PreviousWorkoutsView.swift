@@ -102,7 +102,7 @@ struct WorkoutRowView: View {
             }
 
             // Only show description if it exists
-            if !workout.description.isEmpty {
+            if !workout.description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "figure.strengthtraining.traditional")
                         .resizable()
