@@ -1,5 +1,7 @@
 import SwiftUI
 import SceneKit
+import SDWebImageSwiftUI
+
 
 struct ProfileView: View {
     //@ObservedObject var firestoreService = FirestoreService()
@@ -107,6 +109,44 @@ struct ProfileView: View {
                                         .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
                                         .foregroundColor(.gray)
                                     if let url = URL(string: post.photoURL) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 40)
+                                                .fill(Color(red: 0.16, green: 0.18, blue: 0.2))
+                                                .frame(maxHeight: geometry.size.height / 3)
+                                            
+                                            WebImage(url: url)
+                                                .onSuccess { image, data, cacheType in
+                                                    // Success handler
+                                                    print("Image loaded successfully!")
+                                                }
+                                                /*.placeholder {
+                                                    ProgressView()
+                                                        .frame(maxHeight: geometry.size.height / 3)
+                                                }*/
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(maxHeight: geometry.size.height / 3)
+                                                .clipShape(RoundedRectangle(cornerRadius: 40))
+                                        }
+                                    }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                    .padding(.top, 20)
+                    Spacer()
+                    /*ScrollView {
+                        VStack(spacing: 15) {
+                            ForEach(feedViewModel.userPosts) { post in
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Text(post.caption)
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                        .foregroundColor(.white)
+                                    Text(post.timestamp.dateValue(), style: .date)
+                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .foregroundColor(.gray)
+                                    if let url = URL(string: post.photoURL) {
                                         AsyncImage(url: url) { phase in
                                             switch phase {
                                             case .empty:
@@ -134,19 +174,13 @@ struct ProfileView: View {
                                             }
                                         }
                                     }
-                                    /*.frame(width: geometry.size.width * 0.8, height: geometry.size.height * 0.3)
-                                    .background(Color(red: 0.16, green: 0.18, blue: 0.2))
-                                    .cornerRadius(10)*/
                                 }
-                                .padding()
-                                .background(Color(red: 0.16, green: 0.18, blue: 0.2)/*.opacity(0.8)*/)
-                                .cornerRadius(10)
                             }
                         }
                     }
                     .padding(.top, 20)
                     
-                    Spacer()
+                    Spacer()*/
                 }
             }
         }
@@ -163,7 +197,7 @@ struct ProfileView: View {
         case 0..<200:
             return "frog.usdz"
         case 200..<400:
-            return "cat.usdz"
+            return "rabbit.usdz"
         case 400..<700:
             return "dog.usdz"
         case 700..<1000:

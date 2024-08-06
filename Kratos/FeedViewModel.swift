@@ -17,7 +17,7 @@ class FeedViewModel: ObservableObject {
     @Published var posts = [Post]()
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
-    @Published var userPosts: [Post] = []
+    @Published var userPosts = [Post]() //= []
     
     func uploadPost(image: UIImage, caption: String) {
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }

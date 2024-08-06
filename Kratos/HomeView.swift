@@ -90,6 +90,12 @@ struct ContentView: View {
                                         options: [.autoenablesDefaultLighting, .allowsCameraControl]
                                     )
                                     .frame(width: geometry.size.width * 0.25, height: geometry.size.height * 0.1)
+                                    /*.frame(
+                                            width: geometry.size.width * (modelName == "frog.usdz" ? 0.2 : 0.25),
+                                            height: geometry.size.height * (modelName == "frog.usdz" ? 0.087 : 0.1)
+                                        )
+                                    .offset(y: modelName == "frog.usdz" ? 5 : 0)*/
+                                        
                                     .cornerRadius(20)
                                     //.padding(.leading, 50)
                                     .padding(.leading, geometry.size.width * 0.11)
