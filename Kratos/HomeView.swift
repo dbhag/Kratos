@@ -22,6 +22,19 @@ struct ContentView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .offset(x: 0, y: -geometry.size.height * 0.0325)
+                            Button(action: {
+                                selectedTab = .chatBot // Set selected tab to chatBot
+                            }) {
+                                Image(.trainer)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: geometry.size.width * 0.07, height: geometry.size.width * 0.07)
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.white)
+                                    .cornerRadius(10)
+                            }
+                            .offset(x: -geometry.size.width * 0.37, y: -geometry.size.height * 0.0325)
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)

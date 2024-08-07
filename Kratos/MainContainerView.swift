@@ -16,6 +16,7 @@ enum Tab {
     case feed
     case friendsWorkout
     case workoutDescription
+    case chatBot
 }
 
 struct MainContainerView: View {
@@ -61,6 +62,8 @@ struct MainContainerView: View {
                         FeedView()
                     case .friendsWorkout:
                         FriendsPrevWorkouts(friendID: $friendID)
+                    case .chatBot:
+                        ChatbotView(selectedTab: $selectedTab)
                     }
                 }
                 .navigationBarHidden(true)
@@ -90,7 +93,7 @@ struct MainContainerView: View {
                 VStack {
                     GeometryReader { geometry in
                         HStack {
-                            if streak > 0 && showPlusButton && showStreak && !isTyping {
+                            if streak > 0 && showPlusButton && showStreak && !isTyping && selectedTab != .chatBot {
                                 StreakFlameView(streak: streak)
                                     .frame(width: geometry.size.width * 0.1, height: geometry.size.height * 0.1)
                                     .offset(x: geometry.size.width * 0.62, y: geometry.size.height * 0.0425)
@@ -165,7 +168,7 @@ struct TaskbarView: View {
                 // Add Friends button at the top
                 HStack {
                     Spacer()
-                    if showPlusButton && showStreak && !isTyping {
+                    if showPlusButton && showStreak && !isTyping && selectedTab != .chatBot {
                         Button(action: {
                             selectedTab = .addFriends
                         }) {
@@ -184,7 +187,7 @@ struct TaskbarView: View {
                 
                 Spacer()
                 
-                if selectedTab != .takePhoto && selectedTab != .workoutDescription && !isTyping {
+                if selectedTab != .takePhoto && selectedTab != .workoutDescription && !isTyping && selectedTab != .chatBot  {
                     ZStack {
                         Image(.rectangle41)
                             .resizable()
@@ -193,7 +196,7 @@ struct TaskbarView: View {
                         //.padding(.vertical, -geometry.size.height * 0.09)
                             .offset(y: geometry.size.height * 0.07)
                         
-                        if showPlusButton && selectedTab != .newWorkout && selectedTab != .profile {
+                        if showPlusButton && selectedTab != .newWorkout && selectedTab != .profile  {
                             Button(action: {
                                 selectedTab = .newWorkout
                             }) {
