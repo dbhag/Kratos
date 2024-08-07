@@ -2,44 +2,68 @@ import SwiftUI
 import GoogleGenerativeAI
 
 // API Key Management
-enum APIKey {
+/*enum APIKey {
     static var `default`: String {
         guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else {
             fatalError("Couldn't find key 'API_KEY' in 'Info.plist'.")
         }
         return apiKey
     }
-}
+}*/
 
 // Chat ViewModel using Google Gemini
 class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessage] = []
     
     private let model: GenerativeModel
-    
+    private var chat: Chat
+
     init() {
-        self.model = GenerativeModel(name: "gemini-1.5-flash-latest", apiKey: APIKey.default)
+        let config = GenerationConfig(
+            temperature: 1,
+            topP: 0.95,
+            topK: 64,
+            maxOutputTokens: 8192,
+            responseMIMEType: "text/plain"
+        )
+        
+        guard let apiKey = ProcessInfo.processInfo.environment["GEMINI_API_KEY"] else {
+            fatalError("Add GEMINI_API_KEY as an Environment Variable in your app's scheme.")
+        }
+        
+        self.model = GenerativeModel(
+            name: "gemini-1.5-flash",
+            apiKey: apiKey,
+            generationConfig: config,
+            systemInstruction: "Be as concise as possible and if someone asks for exercises, only give them the exercise and how many reps and sets they should do"
+        )
+        
+        self.chat = model.startChat(history: [])
     }
     
     func sendNewMessage(content: String) {
         let userMessage = ChatMessage(content: content, isUser: true)
         self.messages.append(userMessage)
-        getBotReply(for: content)
+        chat.history.append(ModelContent(role: "user", parts: [.text(content)]))
+        getBotReply()
     }
     
-    func getBotReply(for text: String) {
-        let prompt = "Give a concise response with only what I ask for nothing extra, if I ask for an exercise give me reps and sets, and never include additonal steps: \(text)"
+    func getBotReply() {
         Task {
             do {
-                let generatedResponse = try await model.generateContent(prompt) // Limit response length
-                guard let responseText = generatedResponse.text else {
+                let message = messages.last?.content ?? ""
+                let response = try await chat.sendMessage(message)
+                guard let responseText = response.text else {
                     DispatchQueue.main.async {
                         self.messages.append(ChatMessage(content: "Sorry, there was a problem. Please try again.", isUser: false))
                     }
                     return
                 }
+                // Process the response text to remove asterisks and unwanted formatting
+                let formattedResponse = formatResponse(responseText)
                 DispatchQueue.main.async {
-                    self.messages.append(ChatMessage(content: responseText, isUser: false))
+                    self.messages.append(ChatMessage(content: formattedResponse, isUser: false))
+                    self.chat.history.append(ModelContent(role: "model", parts: [.text(formattedResponse)]))
                 }
             } catch {
                 DispatchQueue.main.async {
@@ -47,6 +71,15 @@ class ChatViewModel: ObservableObject {
                 }
             }
         }
+    }
+    
+    func clearMessages() {
+        messages.removeAll()
+        chat.history.removeAll()
+    }
+    private func formatResponse(_ text: String) -> String {
+        // Remove leading asterisks and extra whitespace
+        return text.replacingOccurrences(of: "*", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
@@ -68,7 +101,8 @@ struct ChatbotView: View {
             VStack {
                 HStack {
                     Button(action: {
-                        selectedTab = .home // Set the tab to home
+                        chatViewModel.clearMessages()
+                        selectedTab = .home// Set the tab to home
                     }) {
                         Image(systemName: "arrow.backward")
                             .resizable()
@@ -142,6 +176,14 @@ struct ChatMessageView: View {
                     .cornerRadius(10)
                     .font(.custom("Marker Felt", size: fontSize))
                     .frame(maxWidth: UIScreen.main.bounds.width * 0.75, alignment: .leading)
+                    .contextMenu {
+                        Button(action: {
+                            UIPasteboard.general.string = message.content
+                        }) {
+                            Text("Copy")
+                            Image(systemName: "doc.on.doc")
+                        }
+                    }
                 Spacer()
             }
         }
