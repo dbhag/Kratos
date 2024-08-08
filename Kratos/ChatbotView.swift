@@ -23,7 +23,7 @@ class ChatViewModel: ObservableObject {
             temperature: 1,
             topP: 0.95,
             topK: 64,
-            maxOutputTokens: 8192,
+            maxOutputTokens: 1000,
             responseMIMEType: "text/plain"
         )
         
@@ -35,7 +35,7 @@ class ChatViewModel: ObservableObject {
             name: "gemini-1.5-flash",
             apiKey: apiKey,
             generationConfig: config,
-            systemInstruction: "Be as concise as possible and if someone asks for exercises, only give them the exercise and how many reps and sets they should do"
+            systemInstruction: "Be as concise as possible and if someone asks for exercises, only give them the exercise and how many reps and sets they should do, if someone asks for an eating plan imagine you are a dietary professional and give them basic advice"
         )
         
         self.chat = model.startChat(history: [])
@@ -166,7 +166,7 @@ struct ChatMessageView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
-                    .font(.custom("Marker Felt", size: fontSize))
+                    .font(.custom("Roboto", size: fontSize))
                     .frame(maxWidth: UIScreen.main.bounds.width * 0.75, alignment: .trailing)
             } else {
                 Text(message.content)
@@ -174,7 +174,7 @@ struct ChatMessageView: View {
                     .background(Color.gray.opacity(0.1))
                     .foregroundColor(.white)
                     .cornerRadius(10)
-                    .font(.custom("Marker Felt", size: fontSize))
+                    .font(.custom("Roboto", size: fontSize))
                     .frame(maxWidth: UIScreen.main.bounds.width * 0.75, alignment: .leading)
                     .contextMenu {
                         Button(action: {

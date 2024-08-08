@@ -164,30 +164,36 @@ struct LoginView: View {
                     Spacer().frame(height: 100)
                     
                     // Title
-                    Text("Login with Google")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .padding(.bottom, 40)
+                    VStack(spacing: 10) {
+                        Text("Kratos")
+                            .font(.system(size: 48, weight: .heavy, design: .default))
+                            .foregroundColor(.white)
+                            .padding(.bottom, 20)
+                        
+                        Image(systemName: "dumbbell")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 80, height: 80)
+                            .foregroundColor(.white)
+                    }
                     
-                    Spacer()
+                    Spacer().frame(height: 100)
                     // Google Sign-In Button
                     Button(action: {
                         Task {
                             await authViewModel.signInWithGoogle()
                         }
                     }) {
-                        HStack {
-                            Image(systemName: "globe")
-                                .foregroundColor(.white)
-                            Text("Sign in with Google")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                        }
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(15.0)
-                        .shadow(color: .gray, radius: 5, x: 0, y: 5)
+                        Text("Login with Google")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(width: 250, height: 50)
+                            .background(
+                                RoundedRectangle(cornerRadius: 25.0)
+                                    .fill(Color.blue)
+                                    .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 10)
+                            )
                     }
                     .alert(item: $authViewModel.errorMessage) { error in
                         Alert(title: Text("Sign In Failed"), message: Text(error.message), dismissButton: .default(Text("OK")))
