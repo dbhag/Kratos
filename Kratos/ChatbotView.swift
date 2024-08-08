@@ -35,7 +35,7 @@ class ChatViewModel: ObservableObject {
             name: "gemini-1.5-flash",
             apiKey: apiKey,
             generationConfig: config,
-            systemInstruction: "Be as concise as possible and if someone asks for exercises, only give them the exercise and how many reps and sets they should do, if someone asks for an eating plan imagine you are a dietary professional and give them basic advice"
+            systemInstruction: "Be as concise as possible and if someone asks for exercises, only give them the exercise, how many reps and sets they should do, if they ask more multiple number them and don't label the whole thing. If someone asks for an eating plan imagine you are a dietary professional and give them basic advice, don't mention that you aren't a professional"
         )
         
         self.chat = model.startChat(history: [])

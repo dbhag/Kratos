@@ -25,16 +25,16 @@ struct ContentView: View {
                             Button(action: {
                                 selectedTab = .chatBot // Set selected tab to chatBot
                             }) {
-                                Image(.trainer)
+                                Image(systemName: "bubble.left.and.bubble.right")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: geometry.size.width * 0.07, height: geometry.size.width * 0.07)
+                                    .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
                                     .foregroundColor(.white)
-                                    .padding(8)
-                                    .background(Color.white)
-                                    .cornerRadius(10)
+                                    //.padding(8)
+                                    //.background(Color.white)
+                                    //.cornerRadius(10)
                             }
-                            .offset(x: -geometry.size.width * 0.37, y: -geometry.size.height * 0.0325)
+                            .offset(x: -geometry.size.width * 0.145, y: -geometry.size.height * 0.03)
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
