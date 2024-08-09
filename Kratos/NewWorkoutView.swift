@@ -106,7 +106,7 @@ struct NewWorkoutView: View {
                             .padding()
                         }
                         .padding(.vertical, geometry.size.height * 0.03)
-                        .offset(y: -geometry.size.height * 0.0175)
+                        .offset(y: -geometry.size.height * 0.0275)
                         
                         Spacer()
                         
@@ -132,7 +132,7 @@ struct NewWorkoutView: View {
                                 .background(Color.white)
                                 .cornerRadius(15.0)
                                 .shadow(color: .gray, radius: 5, x: 0, y: 5)
-                                .offset(y: -geometry.size.height * 0.03)
+                                .offset(y: -geometry.size.height * 0.04)
                         }
                         .alert(isPresented: $showAlert) {
                             Alert(title: Text("Alert"), message: Text("Please select an option to continue"), dismissButton: .default(Text("OK")))
