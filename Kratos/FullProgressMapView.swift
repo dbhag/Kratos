@@ -27,7 +27,7 @@ struct FullProgressMapView: View {
                                             HStack {
                                                 Text("\(firestoreService.userScore) points")
                                                     .foregroundColor(.yellow)
-                                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                    .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                                     .offset(x: geometry.size.width * 0.14, y: geometry.size.height * 0.095)
                                             }
                                         }
@@ -65,7 +65,7 @@ struct FullProgressMapView: View {
                                     }
                                     Text("\(scoreForIndex(index)) points")
                                         .foregroundColor(.white)
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                 }
                                 .id(index)
                             }

@@ -17,19 +17,19 @@ struct LeaderBoardView: View {
                         // Header with Text and Flame Image
                         HStack(spacing: geometry.size.width * 0.05) {
                             Text("Leaderboard")
-                                .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
+                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                                 .tracking(0.36)
                                 .minimumScaleFactor(0.8)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .offset(x: 0, y: -geometry.size.height * 0.052)
+                                .offset(x: 0, y: -geometry.size.height * 0.045)
                         }
                         .padding(.horizontal, geometry.size.width * 0.08)
                         .frame(height: geometry.size.height * 0.1)
                         .padding(.top, geometry.size.height * 0.05)
 
                         Text("Friends")
-                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                            .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                             .foregroundColor(.black)
                             .padding(.vertical, 10)
                             .padding(.horizontal, 20)
@@ -43,11 +43,11 @@ struct LeaderBoardView: View {
                                 if entry.id == currentUserID {
                                     HStack {
                                         Text(entry.name)
-                                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                            .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                             .foregroundColor(.white)
                                         Spacer()
                                         Text("\(entry.score)")
-                                            .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                            .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                             .foregroundColor(.white)
                                     }
                                     .padding()
@@ -66,11 +66,11 @@ struct LeaderBoardView: View {
                                     }) {
                                         HStack {
                                             Text(entry.name)
-                                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                                 .foregroundColor(.white)
                                             Spacer()
                                             Text("\(entry.score)")
-                                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                                 .foregroundColor(.white)
                                         }
                                         .padding()

@@ -16,7 +16,7 @@ struct ContentView: View {
                         // Header with Text and Flame Image
                         HStack(spacing: geometry.size.width * 0.05) {
                             Text("Kratos")
-                                .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
+                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                                 .tracking(0.36)
                                 .minimumScaleFactor(0.8)
                                 .foregroundColor(.white)
@@ -121,7 +121,7 @@ struct ContentView: View {
                                 VStack(alignment: .center) {
                                     Text("\(pointsToNextAnimal) points")
                                         .foregroundColor(.white)
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
                                         //.frame(height: geometry.size.height * 0.024)
                                     GeometryReader { geo in
                                         Path { path in
@@ -173,7 +173,7 @@ struct ContentView: View {
                                             
                                             Text(workout.username)
                                                 .foregroundColor(.white)
-                                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                         }
                                         //Spacer()
@@ -184,7 +184,7 @@ struct ContentView: View {
                                             
                                             Text("\(timeAgoSinceDate(workout.recentWorkout))")
                                                 .foregroundColor(.white)
-                                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                                 .lineLimit(1)
                                                 .minimumScaleFactor(0.75)
                                                 .frame(maxWidth: .infinity, alignment: .leading)

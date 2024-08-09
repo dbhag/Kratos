@@ -20,7 +20,7 @@ struct PreviousWorkoutsView: View {
                     // Header with Text and Flame Image
                     HStack(spacing: geometry.size.width * 0.05) {
                         Text("Past Workouts")
-                            .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
+                            .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                             .tracking(0.36)
                             .minimumScaleFactor(0.8)
                             .foregroundColor(.white)
@@ -78,7 +78,7 @@ struct WorkoutRowView: View {
                     .foregroundColor(.white)
 
                 Text("Workout Date: \(workout.timestamp, formatter: itemFormatter)")
-                    .font(.custom("Marker Felt", size: 18))
+                    .font(.custom("Poppins-Regular", size: 18))
                     .foregroundColor(.white)
                     //.fixedSize(horizontal: false, vertical: true)
                     .lineLimit(1)
@@ -93,7 +93,7 @@ struct WorkoutRowView: View {
                         .foregroundColor(.white)
                     
                     Text(workout.exercises.joined(separator: ", "))
-                        .font(.custom("Marker Felt", size: 16))
+                        .font(.custom("Poppins-Regular", size: 16))
                         .foregroundColor(.white.opacity(0.75))
                         .lineLimit(1)
                         //.fixedSize(horizontal: false, vertical: true)
@@ -111,7 +111,7 @@ struct WorkoutRowView: View {
                         .foregroundColor(.white)
 
                     Text(workout.description)
-                        .font(.custom("Marker Felt", size: 16))
+                        .font(.custom("Poppins-Regular", size: 16))
                         .foregroundColor(.white)
                         .padding(.top, 2)
                         .contextMenu {

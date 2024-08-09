@@ -26,7 +26,7 @@ struct WorkoutDescriptionView: View {
                     
                     VStack {
                         Text("Describe Your Workout")
-                            .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
+                            .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                             .foregroundColor(.white)
                             .padding(.top, geometry.size.height * 0.05)
                         

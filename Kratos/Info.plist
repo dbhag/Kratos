@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>API_KEY</key>
-	<string>AIzaSyD_8uPebiTIcdo18gMdOZ0btqXeJpWDPG8</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -22,6 +20,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>LilitaOne-Regular.ttf</string>
+		<string>Poppins-Regular.ttf</string>
 	</array>
 </dict>
 </plist>

@@ -19,7 +19,7 @@ struct ProfileView: View {
                     // Header with Text
                     HStack(spacing: geometry.size.width * 0.05) {
                         Text("My Profile")
-                            .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
+                            .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                             .tracking(0.36)
                             .minimumScaleFactor(0.8)
                             .foregroundColor(.white)
@@ -65,14 +65,14 @@ struct ProfileView: View {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 10)
                                     .foregroundColor(Color.white.opacity(0.09))
-                                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.08)
+                                    .frame(width: geometry.size.width * 0.55, height: geometry.size.height * 0.08)
                                 
                                 HStack {
                                     Text("Longest Streak:")
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
                                         .foregroundColor(.white)
                                     Text("\(firestoreService.longestStreak) weeks")
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
                                         .foregroundColor(.white)
                                 }
                                 .padding(.horizontal)
@@ -82,14 +82,14 @@ struct ProfileView: View {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 10)
                                     .foregroundColor(Color.white.opacity(0.09))
-                                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.08)
+                                    .frame(width: geometry.size.width * 0.55, height: geometry.size.height * 0.08)
                                 
                                 HStack {
                                     Text("Total Workouts:")
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
                                         .foregroundColor(.white)
                                     Text("\(firestoreService.totalWorkouts)")
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
                                         .foregroundColor(.white)
                                 }
                                 .padding(.horizontal)
@@ -103,10 +103,10 @@ struct ProfileView: View {
                             ForEach(feedViewModel.userPosts) { post in
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(post.caption)
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                         .foregroundColor(.white)
                                     Text(post.timestamp.dateValue(), style: .date)
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
                                         .foregroundColor(.gray)
                                     if let url = URL(string: post.photoURL) {
                                         ZStack {

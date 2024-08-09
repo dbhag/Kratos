@@ -26,7 +26,7 @@ struct NewWorkoutView: View {
                         // Header with Text and Flame Image
                         HStack(spacing: geometry.size.width * 0.05) {
                             Text("New Workout")
-                                .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
+                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                                 .tracking(0.36)
                                 .minimumScaleFactor(0.8)
                                 .foregroundColor(.white)
@@ -39,7 +39,7 @@ struct NewWorkoutView: View {
                         
                         HStack {
                             Text("Lift")
-                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                 .foregroundColor(isLiftSelected ? .black : .gray)
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 20)
@@ -50,7 +50,7 @@ struct NewWorkoutView: View {
                                 }
                             
                             Text("Cardio")
-                                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                 .foregroundColor(!isLiftSelected ? .white : .gray)
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 20)
@@ -78,7 +78,7 @@ struct NewWorkoutView: View {
                                 ForEach(options, id: \.self) { option in
                                     let isSelected = isLiftSelected ? selectedLiftOptions.contains(option) : selectedCardioOptions.contains(option)
                                     Text(option)
-                                        .font(.custom("Marker Felt", size: geometry.size.width * 0.06))
+                                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
                                         .foregroundColor(isSelected ? .black : .white)
                                         .padding()
                                         .frame(width: geometry.size.width * 0.75)

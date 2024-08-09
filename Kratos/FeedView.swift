@@ -39,10 +39,10 @@ struct FeedPostView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(post.username)
-                .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                 .foregroundColor(.white)
             Text(post.caption)
-                .font(.custom("Marker Felt", size: geometry.size.width * 0.04))
+                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
                 .foregroundColor(.gray)
             
             if let url = URL(string: post.photoURL) {

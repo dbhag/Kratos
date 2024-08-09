@@ -51,7 +51,7 @@ struct AddFriendsView: View {
                     // Header with Text and Flame Image
                     HStack(spacing: geometry.size.width * 0.05) {
                         Text("Add Friends")
-                            .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
+                            .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                             .tracking(0.36)
                             .minimumScaleFactor(0.8)
                             .foregroundColor(.white)
@@ -90,7 +90,7 @@ struct AddFriendsView: View {
                     .padding(.top, -geometry.size.height * 0.05)
                     // Incoming Friend Requests
                     Text("Incoming Friend Requests")
-                        .font(.custom("Marker Felt", size: geometry.size.width * 0.05))
+                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                         .foregroundColor(.white)
                         .padding(.top)
 
@@ -98,14 +98,14 @@ struct AddFriendsView: View {
                         HStack {
                             Text(user.username)
                                 .foregroundColor(.white)
-                                .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
                             Spacer()
                             Button(action: {
                                 acceptFriendRequest(from: user)
                             }) {
                                 Text("Accept")
                                     .foregroundColor(.white)
-                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                                    .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
                                     .frame(width: geometry.size.width * 0.24, height:  geometry.size.height * 0.05)
                                     .background(Color.green) // Background color for the rectangle
                                     .cornerRadius(10)
@@ -116,7 +116,7 @@ struct AddFriendsView: View {
                             }) {
                                 Text("Reject")
                                     .foregroundColor(.white)
-                                    .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                                    .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
                                     .frame(width: geometry.size.width * 0.24, height:  geometry.size.height * 0.05)
                                     .background(Color.red) // Background color for the rectangle
                                     .cornerRadius(10)
@@ -154,14 +154,14 @@ struct AddFriendsView: View {
                     HStack(spacing: 5) {
                         Text(user.username)
                             .foregroundColor(.white)
-                            .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                            .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
                         Spacer()
                         Button(action: {
                             addFriend(user: user)
                         }) {
                             Text("Add")
                                 .foregroundColor(.white)
-                                .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                                .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
                                 .frame(width: geometry.size.width * 0.12, height:  geometry.size.height * 0.05)
                                 .background(Color.blue) // Background color for the rectangle
                                 .cornerRadius(5)

@@ -23,7 +23,7 @@ struct TakePhotoView: View {
                                 .frame(height: geometry.size.height * 0.3)
 
                             TextField("Write a caption...", text: $caption)
-                                .font(.custom("Marker Felt", size: 18))
+                                .font(.custom("Poppins-Regular", size: 18))
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(10)
@@ -36,7 +36,7 @@ struct TakePhotoView: View {
                                 selectedTab = .home // Navigate to home after posting
                             }) {
                                 Text("Post")
-                                    .font(.custom("Marker Felt", size: 20))
+                                    .font(.custom("Poppins-Regular", size: 20))
                                     .foregroundColor(.white)
                                     .padding()
                                     .background(Color.blue)

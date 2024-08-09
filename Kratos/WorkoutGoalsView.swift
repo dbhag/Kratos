@@ -17,7 +17,7 @@ struct WorkoutGoalsView: View {
                 VStack {
                     // Header
                     Text("Set Your Weekly Workout Goal")
-                        .font(.custom("Marker Felt", size: geometry.size.width * 0.075))
+                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                         .foregroundColor(.white)
                         .padding(.top, geometry.size.height * 0.1)
                         .padding(.bottom, 20)
@@ -26,7 +26,7 @@ struct WorkoutGoalsView: View {
                     Slider(value: $workoutGoal, in: 1...7, step: 1)
                         .padding(.horizontal, geometry.size.width * 0.1)
                     Text("\(Int(workoutGoal)) times per week")
-                        .font(.custom("Marker Felt", size: geometry.size.width * 0.055))
+                        .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
                         .foregroundColor(.white)
                         .padding(.bottom, 20)
 
