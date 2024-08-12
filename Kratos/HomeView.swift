@@ -122,13 +122,14 @@ struct ContentView: View {
                                     Text("\(pointsToNextAnimal) points")
                                         .foregroundColor(.white)
                                         .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
+                                        .offset(y: geometry.size.height * 0.0055)
                                         //.frame(height: geometry.size.height * 0.024)
                                     GeometryReader { geo in
                                         Path { path in
                                             let width = geo.size.width
                                             let height = geo.size.height
-                                            path.move(to: CGPoint(x: 0, y: height / 2))
-                                            path.addLine(to: CGPoint(x: width, y: height / 2))
+                                            path.move(to: CGPoint(x: 0, y: height / 4))
+                                            path.addLine(to: CGPoint(x: width, y: height / 4))
                                         }
                                         .stroke(Color.white, lineWidth: 2)
                                     }

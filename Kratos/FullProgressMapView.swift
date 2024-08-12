@@ -28,7 +28,7 @@ struct FullProgressMapView: View {
                                                 Text("\(firestoreService.userScore) points")
                                                     .foregroundColor(.yellow)
                                                     .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
-                                                    .offset(x: geometry.size.width * 0.14, y: geometry.size.height * 0.095)
+                                                    .offset(x: geometry.size.width * 0.18, y: geometry.size.height * 0.095)
                                             }
                                         }
                                         Rectangle()
