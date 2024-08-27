@@ -96,7 +96,7 @@ struct WorkoutRowViewFriend: View {
                     .frame(width: 20, height: 20)
                     .foregroundColor(.white)
 
-                Text("Workout Date: \(workout.timestamp, formatter: itemFormatter)")
+                Text("Date: \(workout.timestamp, formatter: itemFormatter)")
                     .font(.custom("Poppins-Regular", size: 18))
                     .foregroundColor(.white)
                     //.fixedSize(horizontal: false, vertical: true)

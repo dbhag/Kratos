@@ -93,7 +93,7 @@ struct MainContainerView: View {
                 VStack {
                     GeometryReader { geometry in
                         HStack {
-                            if streak >= 0 && showPlusButton && showStreak && !isTyping && selectedTab == .home {
+                            if streak > 0 && showPlusButton && showStreak && !isTyping && selectedTab == .home {
                                 StreakFlameView(streak: streak)
                                     .frame(width: geometry.size.width * 0.1, height: geometry.size.height * 0.1)
                                     .offset(x: geometry.size.width * 0.47, y: geometry.size.height * 0.0425)
