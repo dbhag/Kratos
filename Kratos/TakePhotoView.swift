@@ -26,6 +26,7 @@ struct TakePhotoView: View {
                                 .font(.custom("Poppins-Regular", size: 18))
                                 .padding()
                                 .background(Color.white)
+                                .foregroundColor(.black)
                                 .cornerRadius(10)
 
                             Button(action: {

@@ -187,7 +187,7 @@ struct ContentView: View {
                                                 .foregroundColor(.white)
                                                 .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                                 .lineLimit(1)
-                                                .minimumScaleFactor(0.75)
+                                                .minimumScaleFactor(0.68)
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                         }
                                     }

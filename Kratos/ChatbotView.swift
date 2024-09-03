@@ -1,16 +1,6 @@
 import SwiftUI
 import GoogleGenerativeAI
 
-// API Key Management
-/*enum APIKey {
-    static var `default`: String {
-        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else {
-            fatalError("Couldn't find key 'API_KEY' in 'Info.plist'.")
-        }
-        return apiKey
-    }
-}*/
-
 // Chat ViewModel using Google Gemini
 class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessage] = []
@@ -19,6 +9,13 @@ class ChatViewModel: ObservableObject {
     private var chat: Chat
 
     init() {
+        // Access the API key from Config.plist
+        guard let path = Bundle.main.path(forResource: "Config", ofType: "plist"),
+              let configDictionary = NSDictionary(contentsOfFile: path),
+              let apiKey = configDictionary["GEMINI_API_KEY"] as? String else {
+            fatalError("API Key not found in Config.plist")
+        }
+        
         let config = GenerationConfig(
             temperature: 1,
             topP: 0.95,
@@ -27,13 +24,9 @@ class ChatViewModel: ObservableObject {
             responseMIMEType: "text/plain"
         )
         
-        guard let apiKey = ProcessInfo.processInfo.environment["GEMINI_API_KEY"] else {
-            fatalError("Add GEMINI_API_KEY as an Environment Variable in your app's scheme.")
-        }
-        
         self.model = GenerativeModel(
             name: "gemini-1.5-flash",
-            apiKey: apiKey,
+            apiKey: apiKey,  // Use the API key retrieved from Config.plist
             generationConfig: config,
             systemInstruction: "Be as concise as possible and if someone asks for exercises, only give them the exercise, how many reps and sets they should do, if they ask for multiple number them and don't label the whole thing or add additonal notes. If someone asks for an eating plan imagine you are a dietary professional and give them basic advice, don't mention that you aren't a professional"
         )

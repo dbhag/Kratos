@@ -21,7 +21,7 @@ struct WorkoutGoalsView: View {
                         .foregroundColor(.white)
                         .padding(.top, geometry.size.height * 0.1)
                         .padding(.bottom, 20)
-
+                    
                     // Slider
                     Slider(value: $workoutGoal, in: 1...7, step: 1)
                         .padding(.horizontal, geometry.size.width * 0.1)
@@ -29,9 +29,13 @@ struct WorkoutGoalsView: View {
                         .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
                         .foregroundColor(.white)
                         .padding(.bottom, 20)
-
+                    
                     // Submit Button
-                    Button(action: saveWorkoutGoal) {
+                    Button(action: {
+                        saveWorkoutGoal()
+                        navigateToMainContainer = true
+                        authViewModel.state = .signedIn
+                    }) {
                         Text("Submit")
                             .font(.headline)
                             .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.2))
@@ -42,14 +46,9 @@ struct WorkoutGoalsView: View {
                             .shadow(color: .gray, radius: 5, x: 0, y: 5)
                     }
                     .padding(.top, 40)
-
+                    
                     Spacer()
                 }
-                .background(
-                    NavigationLink(destination: MainContainerView(), isActive: $navigateToMainContainer) {
-                        EmptyView()
-                    }
-                )
             }
         }
         .navigationBarBackButtonHidden(true)
