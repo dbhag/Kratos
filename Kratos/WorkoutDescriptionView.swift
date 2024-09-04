@@ -25,10 +25,11 @@ struct WorkoutDescriptionView: View {
                         .edgesIgnoringSafeArea(.all)
                     
                     VStack {
-                        Text("Describe Your Workout")
+                        Text("What did you do?")
                             .font(.custom("Poppins-Regular", size: geometry.size.width * 0.075))
                             .foregroundColor(.white)
                             .padding(.top, geometry.size.height * 0.05)
+                            .offset(y: geometry.size.height * 0.03)
                         
                         TextEditor(text: $description)
                             .foregroundColor(.white)
