@@ -105,6 +105,11 @@ class AuthViewModel: ObservableObject {
             completion(false, "User not found.")
             return
         }
+        
+        if username.count > 11 {
+            completion(false, "Username must be 11 characters or less.")
+            return
+        }
 
         let usersRef = db.collection("users")
 

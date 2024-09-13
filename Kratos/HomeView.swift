@@ -176,6 +176,8 @@ struct ContentView: View {
                                                 .foregroundColor(.white)
                                                 .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                                .lineLimit(1)
+                                                .minimumScaleFactor(0.68)
                                         }
                                         //Spacer()
                                         HStack{
