@@ -39,7 +39,7 @@ struct FullProgressMapView: View {
                                     if let modelName = getModelName(for: scoreForIndex(index)) {
                                         SceneView(
                                             scene: {
-                                                let scene = SCNScene(named: "art.scnassets/\(modelName)")!
+                                                let scene = loadOptimizedScene(named: modelName)!
                                                 scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
                                                 
                                                     /*if !isUnlocked(for: scoreForIndex(index)) {
@@ -160,6 +160,30 @@ struct FullProgressMapView: View {
             let currentLevelIndex = (0..<7).reversed().first { isInBetween(for: scoreForIndex($0)) } ?? 0
             proxy.scrollTo(currentLevelIndex, anchor: .center)
         }
+    func isOlderDevice() -> Bool {
+        let deviceIdentifier = UIDevice.current.modelIdentifier
+        
+        let olderDevices = [
+            "iPhone12,1", "iPhone12,3", "iPhone12,5", // iPhone 11 series (A13)
+            "iPhone11,2", "iPhone11,4", "iPhone11,6", "iPhone11,8", // iPhone XS, XR (A12)
+            "iPhone10,3", "iPhone10,6", // iPhone X (A11)
+            "iPhone10,1", "iPhone10,4", "iPhone10,2", "iPhone10,5" // iPhone 8, 8 Plus (A11)
+        ]
+        
+        return olderDevices.contains(deviceIdentifier)
+    }
+
+    // Helper function to load an optimized scene based on the device
+    func loadOptimizedScene(named modelName: String) -> SCNScene? {
+        if isOlderDevice() {
+            // Load a lower-resolution model for older devices
+            let lowResModelName = modelName.replacingOccurrences(of: ".usdz", with: "_low.usdz") // Assuming low-res models are named _low
+            return SCNScene(named: "art.scnassets/\(lowResModelName)") ?? SCNScene(named: "art.scnassets/\(modelName)")
+        } else {
+            // Load the full-resolution model for newer devices
+            return SCNScene(named: "art.scnassets/\(modelName)")
+        }
+    }
 }
 
 #Preview {

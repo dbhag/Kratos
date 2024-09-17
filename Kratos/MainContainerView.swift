@@ -242,14 +242,14 @@ struct TaskbarView: View {
                         Button(action: {
                             selectedTab = .feed
                         }) {
-                            Image(systemName: "camera")
+                            Image(systemName: "photo")
                                 .resizable()
                                 .foregroundColor(.white)
                                 .opacity(0.9)
                                 .scaledToFit()
                                 .frame(width: geometry.size.width * 0.09, height: geometry.size.width * 0.09)
                         }
-                        .offset(y: geometry.size.height * 0.004)
+                        .offset(x: geometry.size.width * -0.012, y: geometry.size.height * 0.002)
                     }
                     .padding(.bottom, geometry.size.height * (UIDevice.current.userInterfaceIdiom == .phone ? 0.05 : 0.07))
                     .frame(width: geometry.size.width * 0.9)
