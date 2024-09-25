@@ -84,16 +84,13 @@ struct ContentView: View {
 
                         // Progress Snippet View
                         ZStack {
-                            Button(action: {
-                             selectedTab = .progress
-                            }) {
-                                Rectangle()
-                                    .foregroundColor(.clear)
-                                    .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.1)
-                                    //.background(Color.white.opacity(0.09))
-                                    .cornerRadius(24)
-                                    .shadow(color: Color.white.opacity(0.5), radius: 50, x: 5, y: 5)
-                            }
+                            Rectangle()
+                                .foregroundColor(.clear)
+                                .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.1)
+                            //.background(Color.white.opacity(0.09))
+                                .cornerRadius(24)
+                                .shadow(color: Color.white.opacity(0.5), radius: 50, x: 5, y: 5)
+                            
                             HStack(alignment: .center) {
                                 if let modelName = getModelName(for: firestoreService.userScore) {
                                     SceneView(
@@ -106,26 +103,27 @@ struct ContentView: View {
                                     )
                                     .frame(width: geometry.size.width * 0.25, height: geometry.size.height * 0.1)
                                     /*.frame(
-                                            width: geometry.size.width * (modelName == "frog.usdz" ? 0.2 : 0.25),
-                                            height: geometry.size.height * (modelName == "frog.usdz" ? 0.087 : 0.1)
-                                        )
-                                    .offset(y: modelName == "frog.usdz" ? 5 : 0)*/
-                                        
+                                     width: geometry.size.width * (modelName == "frog.usdz" ? 0.2 : 0.25),
+                                     height: geometry.size.height * (modelName == "frog.usdz" ? 0.087 : 0.1)
+                                     )
+                                     .offset(y: modelName == "frog.usdz" ? 5 : 0)*/
+                                    
                                     .cornerRadius(20)
                                     //.padding(.leading, 50)
                                     .padding(.leading, geometry.size.width * 0.11)
+                                    .offset(y: geometry.size.height * 0.0025)
                                     //.scaledToFit()
                                 }
                                 
                                 let nextAnimal = getNextAnimal(for: firestoreService.userScore)
                                 let pointsToNextAnimal = nextAnimal.points - firestoreService.userScore
-
+                                
                                 VStack(alignment: .center) {
                                     Text("\(pointsToNextAnimal) points")
                                         .foregroundColor(.white)
                                         .font(.custom("Poppins-Regular", size: geometry.size.width * 0.04))
                                         .offset(y: geometry.size.height * 0.0055)
-                                        //.frame(height: geometry.size.height * 0.024)
+                                    //.frame(height: geometry.size.height * 0.024)
                                     GeometryReader { geo in
                                         Path { path in
                                             let width = geo.size.width

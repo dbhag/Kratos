@@ -7,7 +7,9 @@ struct FullProgressMapView: View {
     
     @State private var loadedModels: [Int: SCNScene] = [:] // Dictionary to store loaded models
     @State private var loadingModels: Set<Int> = [] // Keep track of models currently being loaded
-    
+    @State private var sceneView = SCNView() // Store SCNView at the state level to retain it
+    @State private var isLoading: [Int: Bool] = [:] // Track loading state for each model
+
     init(firestoreService: FirestoreService, showPlusButton: Binding<Bool>) {
         self.firestoreService = firestoreService
         self._showPlusButton = showPlusButton
@@ -41,25 +43,34 @@ struct FullProgressMapView: View {
                                     }
                                     
                                     if let modelName = getModelName(for: scoreForIndex(index)) {
-                                        SceneView(
-                                            scene: loadedModels[index],
-                                            options: [.autoenablesDefaultLighting, .allowsCameraControl]
-                                        )
-                                        .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.2)
-                                        .background(Color(red: 0.16, green: 0.18, blue: 0.2))
-                                        .cornerRadius(20)
-                                        .onAppear {
-                                            loadModel(for: index, modelName: modelName) // Lazy loading
-                                        }
-                                        .onDisappear {
-                                            unloadModel(for: index) // Clean-up resources
+                                        if isLoading[index] ?? true {
+                                            // Show a placeholder while loading
+                                            Rectangle()
+                                                .fill(Color(red: 0.16, green: 0.18, blue: 0.2))
+                                                .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.2)
+                                                .cornerRadius(20)
+                                        } else {
+                                            SceneView(
+                                                scene: loadedModels[index],
+                                                options: [.autoenablesDefaultLighting, .allowsCameraControl]
+                                            )
+                                            .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.2)
+                                            .background(Color(red: 0.16, green: 0.18, blue: 0.2))
+                                            .cornerRadius(20)
                                         }
                                     }
+                                    
                                     Text("\(scoreForIndex(index)) points")
                                         .foregroundColor(.white)
                                         .font(.custom("Poppins-Regular", size: geometry.size.width * 0.05))
                                 }
                                 .id(index)
+                                .onAppear {
+                                    loadModel(for: index, modelName: getModelName(for: scoreForIndex(index)) ?? "")
+                                }
+                                .onDisappear {
+                                    unloadModel(for: index) // Clean-up resources
+                                }
                             }
                             .padding()
                         }
@@ -125,25 +136,6 @@ struct FullProgressMapView: View {
         }
     }
 
-    func scoreForNextLevel(_ score: Int) -> Int {
-        switch score {
-        case 0:
-            return 200
-        case 200:
-            return 400
-        case 400:
-            return 700
-        case 700:
-            return 1000
-        case 1000:
-            return 1500
-        case 1500:
-            return 2000
-        default:
-            return score + 200
-        }
-    }
-
     func scrollToCurrentLevel(proxy: ScrollViewProxy) {
         let currentLevelIndex = (0..<7).reversed().first { isInBetween(for: scoreForIndex($0)) } ?? 0
         proxy.scrollTo(currentLevelIndex, anchor: .center)
@@ -154,18 +146,29 @@ struct FullProgressMapView: View {
         guard !loadingModels.contains(index) else { return } // Prevent loading the same model multiple times
         
         loadingModels.insert(index)
+        isLoading[index] = true // Set loading to true initially
+        
         DispatchQueue.global(qos: .background).async {
-            if let scene = loadOptimizedScene(named: modelName) {
-                DispatchQueue.main.async {
-                    loadedModels[index] = scene
-                    loadingModels.remove(index)
-                }
+            if let scene = self.loadOptimizedScene(named: modelName) {
+                // Preload the scene resources using SCNView
+                self.sceneView.prepare([scene], completionHandler: { success in
+                    if success {
+                        DispatchQueue.main.async {
+                            self.loadedModels[index] = scene
+                            self.loadingModels.remove(index)
+                            self.isLoading[index] = false // Set loading to false when done
+                        }
+                    }
+                })
             }
         }
     }
 
     // Unload the model to free up memory when it goes off-screen
     func unloadModel(for index: Int) {
+        if let scene = loadedModels[index] {
+            scene.rootNode.childNodes.forEach { $0.removeFromParentNode() } // Remove all nodes
+        }
         loadedModels[index] = nil
     }
 
@@ -188,7 +191,7 @@ struct FullProgressMapView: View {
         return scene
     }
 
-
+    // Check if the device is older
     func isOlderDevice() -> Bool {
         let deviceIdentifier = UIDevice.current.modelIdentifier
         
@@ -201,9 +204,18 @@ struct FullProgressMapView: View {
         
         return olderDevices.contains(deviceIdentifier)
     }
+    
+    // Limiting FPS for older devices
+    func configureFPS(for sceneView: SCNView) {
+        if isOlderDevice() {
+            sceneView.preferredFramesPerSecond = 30 // Limit FPS for older devices
+        } else {
+            sceneView.preferredFramesPerSecond = 60
+        }
+    }
 }
-
 
 #Preview {
     FullProgressMapView(firestoreService: FirestoreService(), showPlusButton: .constant(true))
 }
+

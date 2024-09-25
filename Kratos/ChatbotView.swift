@@ -10,10 +10,15 @@ class ChatViewModel: ObservableObject {
 
     init() {
         // Access the API key from Config.plist
-        guard let path = Bundle.main.path(forResource: "Config", ofType: "plist"),
+        /*guard let path = Bundle.main.path(forResource: "Config", ofType: "plist"),
               let configDictionary = NSDictionary(contentsOfFile: path),
               let apiKey = configDictionary["GEMINI_API_KEY"] as? String else {
-            fatalError("API Key not found in Config.plist")
+            fatalError("API Key not found in Config.plist")*/
+        setupAPIKeyIfNeeded() // Ensure the API key is stored before making the first request
+                // Retrieve the API key from Keychain
+                guard let apiKeyData = KeychainService.load(key: "API_KEY"),
+                      let apiKey = String(data: apiKeyData, encoding: .utf8) else {
+                    fatalError("API Key not found in Keychain")
         }
         
         let config = GenerationConfig(

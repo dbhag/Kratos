@@ -32,6 +32,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
   @StateObject var firestoreService = FirestoreService()
   @StateObject var feedViewModel = FeedViewModel()
 
+    init()
+    {
+        setupAPIKeyIfNeeded() // Run the Keychain setup only once
+    }
 
   var body: some Scene {
     WindowGroup {
