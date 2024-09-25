@@ -162,9 +162,9 @@ struct AddFriendsView: View {
                             Text("Add")
                                 .foregroundColor(.white)
                                 .font(.custom("Poppins-Regular", size: geometry.size.width * 0.055))
-                                .frame(width: geometry.size.width * 0.12, height:  geometry.size.height * 0.05)
+                                .frame(width: geometry.size.width * 0.24, height:  geometry.size.height * 0.05)
                                 .background(Color.blue) // Background color for the rectangle
-                                .cornerRadius(5)
+                                .cornerRadius(10)
                                 .shadow(color: Color.black.opacity(0.5), radius: 5, x: 0, y: 5)
                         }
                         .buttonStyle(PlainButtonStyle())

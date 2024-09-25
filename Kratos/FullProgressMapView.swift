@@ -5,12 +5,16 @@ struct FullProgressMapView: View {
     @ObservedObject var firestoreService: FirestoreService
     @Binding var showPlusButton: Bool
     
+    @State private var loadedModels: [Int: SCNScene] = [:] // Dictionary to store loaded models
+    @State private var loadingModels: Set<Int> = [] // Keep track of models currently being loaded
+    
     init(firestoreService: FirestoreService, showPlusButton: Binding<Bool>) {
         self.firestoreService = firestoreService
         self._showPlusButton = showPlusButton
         // Modify navigation bar appearance globally
         UINavigationBar.appearance().barTintColor = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1.0)
     }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -38,30 +42,18 @@ struct FullProgressMapView: View {
                                     
                                     if let modelName = getModelName(for: scoreForIndex(index)) {
                                         SceneView(
-                                            scene: {
-                                                let scene = loadOptimizedScene(named: modelName)!
-                                                scene.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1)
-                                                
-                                                    /*if !isUnlocked(for: scoreForIndex(index)) {
-                                                    let material = SCNMaterial()
-                                                    material.diffuse.contents = UIColor.black
-                                                    scene.rootNode.childNodes.first?.geometry?.materials = [material]
-                                                }*/
-                                                let ambientLight = SCNLight()
-                                                ambientLight.type = .ambient
-                                                ambientLight.color = UIColor(white: 0.8, alpha: 1.0)
-                                                
-                                                let ambientLightNode = SCNNode()
-                                                ambientLightNode.light = ambientLight
-                                                scene.rootNode.addChildNode(ambientLightNode)
-                                                
-                                                return scene
-                                            }(),
+                                            scene: loadedModels[index],
                                             options: [.autoenablesDefaultLighting, .allowsCameraControl]
                                         )
                                         .frame(width: geometry.size.width * 0.6, height: geometry.size.height * 0.2)
                                         .background(Color(red: 0.16, green: 0.18, blue: 0.2))
                                         .cornerRadius(20)
+                                        .onAppear {
+                                            loadModel(for: index, modelName: modelName) // Lazy loading
+                                        }
+                                        .onDisappear {
+                                            unloadModel(for: index) // Clean-up resources
+                                        }
                                     }
                                     Text("\(scoreForIndex(index)) points")
                                         .foregroundColor(.white)
@@ -73,19 +65,17 @@ struct FullProgressMapView: View {
                         }
                         .padding()
                         .onAppear {
-                          scrollToCurrentLevel(proxy: proxy)
-                          firestoreService.fetchUserScore()
-                          showPlusButton = false
+                            scrollToCurrentLevel(proxy: proxy)
+                            firestoreService.fetchUserScore()
+                            showPlusButton = false
                         }
-                        .onDisappear
-                        {
-                          showPlusButton = true
+                        .onDisappear {
+                            showPlusButton = true
                         }
                     }
                 }
             }
         }
-        //.navigationBarTitle("Progress Map", displayMode: .inline)
     }
     
     func getModelName(for score: Int) -> String? {
@@ -109,57 +99,96 @@ struct FullProgressMapView: View {
         }
     }
     
-    /*func isUnlocked(for score: Int) -> Bool {
-        return firestoreService.userScore >= score
-    }*/
-
     func isInBetween(for score: Int) -> Bool {
         let nextScore = scoreForIndex(score + 1)
         return firestoreService.userScore > scoreForIndex(score) && firestoreService.userScore < nextScore
     }
+
     func scoreForIndex(_ index: Int) -> Int {
-            switch index {
-            case 0:
-                return 0
-            case 1:
-                return 200
-            case 2:
-                return 400
-            case 3:
-                return 700
-            case 4:
-                return 1000
-            case 5:
-                return 1500
-            case 6:
-                return 2000
-            default:
-                return 0
+        switch index {
+        case 0:
+            return 0
+        case 1:
+            return 200
+        case 2:
+            return 400
+        case 3:
+            return 700
+        case 4:
+            return 1000
+        case 5:
+            return 1500
+        case 6:
+            return 2000
+        default:
+            return 0
+        }
+    }
+
+    func scoreForNextLevel(_ score: Int) -> Int {
+        switch score {
+        case 0:
+            return 200
+        case 200:
+            return 400
+        case 400:
+            return 700
+        case 700:
+            return 1000
+        case 1000:
+            return 1500
+        case 1500:
+            return 2000
+        default:
+            return score + 200
+        }
+    }
+
+    func scrollToCurrentLevel(proxy: ScrollViewProxy) {
+        let currentLevelIndex = (0..<7).reversed().first { isInBetween(for: scoreForIndex($0)) } ?? 0
+        proxy.scrollTo(currentLevelIndex, anchor: .center)
+    }
+
+    // Lazy load the model when it appears on screen
+    func loadModel(for index: Int, modelName: String) {
+        guard !loadingModels.contains(index) else { return } // Prevent loading the same model multiple times
+        
+        loadingModels.insert(index)
+        DispatchQueue.global(qos: .background).async {
+            if let scene = loadOptimizedScene(named: modelName) {
+                DispatchQueue.main.async {
+                    loadedModels[index] = scene
+                    loadingModels.remove(index)
+                }
             }
+        }
+    }
+
+    // Unload the model to free up memory when it goes off-screen
+    func unloadModel(for index: Int) {
+        loadedModels[index] = nil
+    }
+
+    // Helper function to load an optimized scene based on the device
+    func loadOptimizedScene(named modelName: String) -> SCNScene? {
+        let scene: SCNScene?
+        
+        if isOlderDevice() {
+            // Load a lower-resolution model for older devices
+            let lowResModelName = modelName.replacingOccurrences(of: ".usdz", with: "_low.usdz")
+            scene = SCNScene(named: "art.scnassets/\(lowResModelName)") ?? SCNScene(named: "art.scnassets/\(modelName)")
+        } else {
+            // Load the full-resolution model for newer devices
+            scene = SCNScene(named: "art.scnassets/\(modelName)")
         }
         
-        func scoreForNextLevel(_ score: Int) -> Int {
-            switch score {
-            case 0:
-                return 200
-            case 200:
-                return 400
-            case 400:
-                return 700
-            case 700:
-                return 1000
-            case 1000:
-                return 1500
-            case 1500:
-                return 2000
-            default:
-                return score + 200
-            }
-        }
-    func scrollToCurrentLevel(proxy: ScrollViewProxy) {
-            let currentLevelIndex = (0..<7).reversed().first { isInBetween(for: scoreForIndex($0)) } ?? 0
-            proxy.scrollTo(currentLevelIndex, anchor: .center)
-        }
+        // Set the background color to match the app's background
+        scene?.background.contents = UIColor(red: 0.16, green: 0.18, blue: 0.2, alpha: 1.0)
+        
+        return scene
+    }
+
+
     func isOlderDevice() -> Bool {
         let deviceIdentifier = UIDevice.current.modelIdentifier
         
@@ -172,19 +201,8 @@ struct FullProgressMapView: View {
         
         return olderDevices.contains(deviceIdentifier)
     }
-
-    // Helper function to load an optimized scene based on the device
-    func loadOptimizedScene(named modelName: String) -> SCNScene? {
-        if isOlderDevice() {
-            // Load a lower-resolution model for older devices
-            let lowResModelName = modelName.replacingOccurrences(of: ".usdz", with: "_low.usdz") // Assuming low-res models are named _low
-            return SCNScene(named: "art.scnassets/\(lowResModelName)") ?? SCNScene(named: "art.scnassets/\(modelName)")
-        } else {
-            // Load the full-resolution model for newer devices
-            return SCNScene(named: "art.scnassets/\(modelName)")
-        }
-    }
 }
+
 
 #Preview {
     FullProgressMapView(firestoreService: FirestoreService(), showPlusButton: .constant(true))
