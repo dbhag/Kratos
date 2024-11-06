@@ -5,6 +5,8 @@ struct ContentView: View {
     @EnvironmentObject var firestoreService: FirestoreService
     @Binding var selectedTab: Tab
     @Binding var showPlusButton: Bool
+    
+    @State private var preloadedScene: SCNScene? // Preloaded scene to avoid race conditions
 
     var body: some View {
             GeometryReader { geometry in
@@ -77,6 +79,9 @@ struct ContentView: View {
                             //.padding(.top, -14)
                             //.padding(.top, -geometry.size.height * 0.02)
                             .offset(y: -geometry.size.height * 0.05)
+                            .onDisappear {
+                                cleanupScene()
+                            }
                         }
                         
                         Spacer()
@@ -113,6 +118,9 @@ struct ContentView: View {
                                     .padding(.leading, geometry.size.width * 0.11)
                                     .offset(y: geometry.size.height * 0.0025)
                                     //.scaledToFit()
+                                    .onDisappear {
+                                        cleanupScene()
+                                    }
                                 }
                                 
                                 let nextAnimal = getNextAnimal(for: firestoreService.userScore)
@@ -151,6 +159,9 @@ struct ContentView: View {
                                     .cornerRadius(20)
                                     //.padding(.trailing, 50)
                                     .padding(.trailing, geometry.size.width * 0.11)
+                                    .onDisappear {
+                                        cleanupScene()
+                                    }
                                 }
                             }
                         }
@@ -206,7 +217,7 @@ struct ContentView: View {
                         firestoreService.fetchFriendsRecentWorkouts()
                         firestoreService.fetchUserScore() // Fetch user score on appear
                     }
-                    .onDisappear 
+                    .onDisappear
                     {
                         firestoreService.stopListening()
                     }
@@ -230,6 +241,11 @@ struct ContentView: View {
         let (min, _) = node.boundingBox
             node.position.y -= min.y// Moves the model up by its lowest point
     }
+    private func cleanupScene() {
+         preloadedScene?.rootNode.childNodes.forEach { $0.removeFromParentNode() }
+         preloadedScene = nil
+         print("Scene cleaned up and resources released.")
+     }
 
     // Helper function to get model name based on score
     func getModelName(for score: Int) -> String? {

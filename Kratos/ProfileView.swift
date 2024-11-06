@@ -54,7 +54,7 @@ struct ProfileView: View {
                                 options: [.autoenablesDefaultLighting, .allowsCameraControl]
                             )
                             .frame(width: geometry.size.width * 0.3, height: geometry.size.height * 0.2)
-                            .background(Color.clear) // Ensure background is clear
+                            .background(Color.clear) // Ensure background is clears
                             .cornerRadius(20)
                             .padding(.top, -20)
                             .offset(x: -geometry.size.width * 0.03, y: geometry.size.height * 0.015)
